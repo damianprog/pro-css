@@ -171,6 +171,29 @@
   }
 }
 
+@layer layout {
+  .wrapper {
+    max-width: 1130px;
+    margin-inline: auto;
+    padding-inline: 1rem;
+    /* changing back to content-box just for this particular element for padding not to be included 
+    in content size specified on figma 
+    Other way of handling this problem is instead of changing to content-box set max-width to calc(1130px + 2rem)
+    there is also a way with using min-width
+    */
+    box-sizing: content-box;
+  }
+
+  /* There is also a way of naming with using data attribue .wrapper[data-width="wide"] */
+
+  .wrapper--wide {
+    max-width: 1130px;
+  }
+
+  .wrapper--narrow {
+  }
+}
+
 @layer utilities {
   .visually-hidden {
     clip: rect(0 0 0 0);
