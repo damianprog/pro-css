@@ -1,0 +1,484 @@
+https://github.com/kevin-powell/fem-website-from-scratch-progress
+
+https://website-from-scratch-1.netlify.app/lessons/welcome/what-we-will-be-building
+
+https://www.figma.com/design/XV3mC19r1ih4SymTnKQu4f/FungiFinders
+
+
+What is a bento-style layout in web design?
+
+A bento-style layout is a grid-based design pattern that arranges content in varied rectangular sections of different sizes, similar to the compartments in a Japanese bento box. It creates visual interest through asymmetric arrangements while maintaining an organized structure.
+
+
+What CSS techniques can be used to create responsive layouts that adapt to different screen sizes?
+
+CSS techniques for responsive layouts include: CSS Grid and Flexbox for flexible layouts, media queries to apply different styles at breakpoints, relative units (rem, em, %, vw/vh) for fluid sizing, clamp() and min()/max() functions for responsive typography and spacing, and CSS transforms and transitions for responsive navigation patterns.
+
+
+What is a bento-style layout?
+
+A bento-style layout is a grid-based design pattern that arranges content in different-sized boxes or cards, similar to how food is arranged in a Japanese bento box. It creates an asymmetric, visually interesting layout where elements are organized in a modular fashion.
+
+
+What is the benefit of creating adaptable code when building a website project?
+
+Adaptable code makes it easy to customize the project and allows developers to extract pieces and patterns from the project to apply to future work. This approach emphasizes reusable techniques over memorizing steps for one specific implementation.
+
+
+What is a key benefit of matching a website to a Figma design during development?
+
+Matching websites to designs provided in tools like Figma is a common real-world requirement when working with design specifications. This practice helps developers accurately implement the intended visual design and layout.
+
+sections are basically divs but have semantic meaning to them
+
+nav, footer, header and so on are landmark regions which we'll talk about later
+
+section attributes will get extra powert to them with an area attribute
+
+
+What class naming convention is recommended for the header element in HTML?
+
+Use descriptive classes like 'site-header' or 'primary-header' to distinguish the top page header and provide clarity for potential future use or multiple headers
+
+
+What attributes should be included when adding an image to a webpage?
+
+Always include an alt attribute. For decorative images like logos, the alt can be left blank. For meaningful images, provide a descriptive alt text that explains the image's content
+
+
+What is a recommended approach for writing HTML content?
+
+Write the HTML structure first, then copy and paste the text content into the appropriate tags. This makes it easier to structure and modify content
+
+
+What landmark HTML elements can improve page semantics?
+
+Use semantic elements like nav, header, footer, main, section, and article. These provide additional semantic meaning and can improve accessibility when used correctly
+
+
+Why should you add a class like site-header or primary-header to the <header> element at the top of a page?
+
+The <header> element can be used in multiple places throughout a page (not just at the top), so adding a distinguishing class helps identify which header is the main site header and makes it easier to target with CSS.
+
+
+
+CSS Methodology
+
+Either decide on something and do your best to stick with it
+or do the approach the team is using
+Everybody needs to be consisten in what they're doing
+
+
+Don't be dogmatic 
+something you do might not be the best for everyone
+
+Take a look on the project in bigger picture not hyper focus on one section
+
+I see some similarities and start thinking about them
+Don't need a plan right away but just be aware of those things
+
+Font size and the text color changes
+
+
+When deciding how to approach writing CSS, what is the most important initial step?
+
+Look at the entire design and analyze similarities, patterns, and components across the whole project
+
+
+What potential CSS patterns should a developer look for when analyzing a design?
+
+Repeated background colors, border radiuses, text sizes, color variations, image styles, and component similarities
+
+
+What advice is given about choosing a CSS approach?
+
+Do not be dogmatic; recognize that different projects may require different approaches, and be open to finding a balanced method
+
+
+Why is it important to analyze an entire design before writing CSS, rather than styling elements one at a time from top to bottom?
+
+Analyzing the entire design helps identify patterns and similarities across the project, such as repeating background colors, border radiuses, text sizes, and card layouts. This allows you to plan reusable styles and avoid redeclaring the same properties over and over again, making the CSS more maintainable in the long run.
+
+
+Why is it recommended to analyze the entire design before writing CSS rather than styling elements as you build them?
+
+Analyzing the entire design first helps identify patterns and similarities across the project, such as repeated colors, border radiuses, card structures, and text styles. This allows you to plan reusable CSS solutions rather than redeclaring styles over and over. For example, you might notice that cards with similar background colors, padding, and border radius appear in multiple sections, which can inform how you structure your CSS for reusability.
+
+
+Resetting our CSS
+
+light-weight and just getting everything set off in the right direction
+
+
+box-sizing: border-box;
+Just means the padding and border are included in the width of something
+
+
+/* https://kilianvalkhof.com/2022/css-html/your-css-reset-needs-text-size-adjust-probably/ */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+don't change font depending on looking at page on landscape with your phone
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+This is a workaround for an issue with Safari and VoiceOver.
+
+The problem: when you set list-style: none on a list, Safari (WebKit) stops treating the <ul>/<ol> as a list in the accessibility tree, so a screen reader won’t announce “list, 5 items.” WebKit does this on purpose, on the reasoning that a list without bullets often doesn’t look like a list.
+
+text-wrap: balance makes all lines roughly the same length.
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+Prevents orphan words
+p,
+li {
+  text-wrap: pretty;
+}
+
+
+inline is on horizontal axis 
+block is vertical axis
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+as these often don't inherit and look ugly
+
+
+What is the purpose of box-sizing: border-box in CSS?
+
+It ensures that padding is included within the specified width of an element, making layout calculations easier by preventing padding from altering the total width of an element
+
+
+What does text-size-adjust do on iOS devices?
+
+It prevents automatic font size adjustments when rotating a device to landscape mode, which was originally a feature from when websites were not mobile-optimized
+
+
+
+What does text-wrap: balance do for typography?
+
+It balances text across lines for headings or large text by distributing words more evenly, making titles look more aesthetically pleasing. For example, instead of having one word like 'mushroom' stay on the first line while 'foraging' drops to the next, text-wrap: balance ensures the title is balanced across both lines.
+
+
+Why use font: inherit on form elements like input, button, textarea, and select?
+
+These form elements do not automatically inherit font properties, so font: inherit helps maintain font consistency across a project
+
+
+Atribute selector is the same specificity as class selector
+
+Order of the importance of layers
+@layer reset, base, layout, components;
+
+
+What is the purpose of using CSS layers?
+
+CSS layers help organize and manage specificity in stylesheets by allowing developers to create a hierarchy of styles, reducing complexity and potential specificity conflicts while providing a way to structure and control the cascade of styles more effectively.
+
+
+How can you declare CSS layers without adding code?
+
+You can declare layers using the @layer rule with a comma-separated list of layer names, which sets the order of importance. For example: @layer reset, base, layout, components;
+
+
+Do CSS layers impact inheritance?
+
+No, CSS layers do not affect inheritance. Inherited properties like color will continue to be inherited from parent elements regardless of the layer structure.
+
+
+What is an example of creating a layer for CSS reset styles?
+
+You can create a reset layer by using @layer reset { ... } and placing reset styles inside the layer, which helps encapsulate and organize foundational styles while maintaining the same functionality.
+
+
+How do CSS cascade layers affect specificity rules between selectors?
+
+CSS cascade layers change how specificity works by prioritizing layer order over selector specificity. A selector in a later layer will override a selector in an earlier layer, even if the earlier selector has higher specificity. For example, an element selector in a later layer will override an attribute selector (which has class-level specificity) in an earlier layer.
+
+
+
+What is a recommended naming convention for custom CSS color properties?
+
+Use a prefix 'clr-' followed by the color name and a number based on a 500 scale, with 500 as the middle ground color. This allows for easy addition of colors between existing values (e.g., clr-brown-450).
+
+
+What is a recommended approach for creating consistent color names when working with a design file that has inconsistent color naming?
+
+
+What is a recommended approach for creating consistent color names when working with a design file that has inconsistent color naming?
+
+Create a consistent naming system using a prefix (like 'clr-') followed by the color name and a number based on a 500 scale. Use 500 as the middle ground, with lighter colors using 400 and below (400, 300, 200, 100), and darker colors using 600 and above (600, 700, 800, 900). This approach provides equal amounts on both sides and allows flexibility to insert new colors (like 450) if needed. When assigning numbers, consider making the darkest shade 900 and working upward to leave room for potentially lighter colors to be added later.
+
+
+What is a recommended prefix naming convention for organizing CSS custom properties?
+
+Use 'clr-' for colors, 'ff-' for font families, and 'fs-' for font sizes to make properties more easily identifiable.
+
+
+How can neutral colors be named in a color naming system?
+
+Neutral colors can be named with numbers like neutral-000 for white, neutral-100 for light neutrals, allowing for a consistent and expandable color scale.
+
+
+What is a common naming convention for CSS custom properties when working with color scales, and why is a numbering system like 100-900 preferred over sequential 1-5?
+
+A common convention uses a prefix like clr- followed by the color name and a number from a scale (e.g., --clr-brown-500 for the middle value). Using increments of 100 (100, 200, 300, etc.) is preferred over 1-5 because it allows you to insert additional values between existing ones if needed (like --clr-brown-450) without disrupting the entire numbering system. The 500 value typically represents the middle ground, giving equal room for lighter values (100-400) and darker values (600-900).
+
+
+
+What are the recommended CSS font size units for accessibility?
+
+REM units are recommended for font sizes because they respect user browser font size preferences. If users have increased their browser's default font size (often due to vision difficulties), pixel-based font sizes will override those preferences, while REM-based font sizes will adjust accordingly. This makes REM units essential for accessibility.
+
+
+When implementing custom typography for a website, what CSS custom property naming convention can be used to distinguish between different font families?
+
+
+Why should font sizes not be set in pixels?
+
+Pixel font sizes do not respect user's browser-level font size preferences, which can make text difficult to read for users with vision challenges. REM units allow text to adjust based on user settings.
+
+
+How can CSS media queries be simplified with modern CSS nesting?
+
+Modern CSS allows nesting media queries directly within selectors (like root), rather than having to create a separate root selector outside. You can write the media query inside the root block using range syntax like 'width > 760px' instead of traditional min-width approaches. This makes the code more organized and is especially useful for managing responsive custom properties.
+
+
+Why should font sizes be set using REM units instead of pixels?
+
+Using REM units for font sizes respects user accessibility preferences set at the browser level. If users have changed their browser's font size (often due to vision needs), REM units will adjust accordingly, while pixel-based font sizes will override user preferences. This ensures that users who need larger text can actually see it properly on your website.
+
+
+What are the two layers of custom properties discussed?
+
+Primitive properties (like brown 400, brown 500) and semantic properties (describing what the property is used for)
+
+
+What is the recommended approach when using custom properties in a project?
+
+Use semantic custom properties as much as possible and avoid using primitive custom properties directly
+
+What types of custom properties are suggested to be created for a design system?
+
+
+Brand colors are the small, fixed set of colors that make up a company’s visual identity. They’re used consistently across the site, logo, and marketing so the brand is instantly recognizable.
+
+A typical palette has:
+
+Primary: the main brand color (buttons, links, key highlights)
+Secondary / accent: supporting colors for variety and emphasis
+Neutrals: the text colors, backgrounds, borders, and grays
+
+Why create a semantic layer of custom properties?
+
+To make the project more maintainable, adaptable, and easier to understand by using meaningful names instead of numeric color codes
+
+
+Why is it recommended to use semantic custom properties instead of primitive custom properties directly in CSS projects?
+
+Using semantic custom properties makes projects more maintainable and adaptable. Instead of remembering whether a darker background needs brown-600 or brown-500, you can use descriptive names like background-dark or background-main. This is especially helpful in large systems with many color variations, as it's easier to remember keywords than specific numbers.
+
+
+The idea is that only font-size changes what 1rem means. font-family and line-height don’t.
+
+Why font-size goes on body
+
+rem = the font-size of the html element. Base text often gets bigger on desktop:
+
+css
+--fs-400: 1rem;        /* mobile */
+@media (min-width: 50em) { --fs-400: 1.125rem; }  /* desktop */
+
+If you put it on html: at desktop, 1rem becomes 18px instead of 16px. Then everything else sized in rem grows too: padding, margins, gaps, max-width. padding: 2rem goes from 32px to 36px without you asking for it.
+
+If you put it on body: 1rem stays at the browser default (16px, or whatever the user has set). The text gets bigger, but your spacing system doesn’t move. That’s what he means by “I want my REM to stay consistent.”
+
+
+What is the recommended approach for setting base styles in CSS?
+
+Leverage CSS inheritance by setting typography and base styles early, which makes writing less CSS later and ensures more predictable styling across the document
+
+
+What is the difference between the 'focus' and 'focus-visible' CSS pseudo-classes?
+
+'focus' applies a state to an element regardless of interaction method, while 'focus-visible' allows browsers to intelligently apply focus styles based on the type of user interaction (keyboard navigation vs mouse click)
+
+
+Why is it recommended to avoid directly styling semantic HTML elements like h1, h2, h3?
+
+Directly styling semantic elements can lead to poor semantic choices and encourage developers to choose HTML tags based on styling needs rather than document structure and meaning
+
+
+What are some alternative ways to style headings beyond using semantic HTML selectors?
+
+Use class-based selectors like 'section-title', 'heading-md', 'primary-title', or 'title' to separate styling concerns from semantic meaning
+
+
+What is the difference between the :focus and :focus-visible pseudo-classes in CSS?
+
+:focus applies styling whenever an element gains focus, including when clicked with a mouse. :focus-visible is more intelligent—it only shows focus styling when the user is keyboard navigating, not when clicking with a mouse. This prevents buttons and other interactive elements from maintaining focus styles after being clicked, which improves the user experience while still providing visual feedback for keyboard users.
+
+
+Why is setting font size on the body element preferred over setting it on the HTML element?
+
+To keep REM measurments consistent across different screen sizes
+
+
+What is the purpose of the 'alt' attribute in HTML image tags?
+
+The alt attribute serves multiple purposes: it provides text description if an image fails to load, helps assistive technologies describe images to users who cannot see them, and provides context about the image's content
+
+
+When writing alt text for images, what key considerations should be kept in mind?
+
+Alt text should be meaningful and descriptive, providing context about what the image depicts. It serves multiple purposes: it displays when images fail to load, and it's read by assistive technology for users who cannot see images. Descriptions should be sufficiently detailed to help users understand the content (e.g., "A tightly grouped brown mushrooms growing up a mossy tree trunk" rather than just "mushrooms"). While AI can help generate alt text, always verify its accuracy since AI may misinterpret images.
+
+
+What is the purpose of using semantic HTML elements?
+
+Semantic HTML elements provide meaning to the structure of web content, helping browsers, search engines, and assistive technologies understand the organization and hierarchy of the page
+
+
+What is a mailto link and how is it implemented in HTML?
+
+A mailto link is an HTML anchor tag that, when clicked, opens the user's default email client with a new message. It is implemented using the 'mailto:' protocol followed by an email address, such as <a href='mailto:example@email.com'>Send Email</a>
+
+
+Why is it recommended to look at the desktop design first when creating HTML structure?
+
+Looking at the desktop design first helps understand the full layout complexity, identify multi-column structures, and plan the overall page organization more effectively than starting with a mobile view
+
+
+What is the problem with using generic link text like 'Learn More'?
+
+Generic link text lacks context and makes it difficult for users, especially those using assistive technologies like screen readers, to understand where the link will take them or what additional information they will access.
+
+
+What is the purpose of the 'visually-hidden' class in web accessibility?
+
+The 'visually-hidden' class allows additional descriptive text to be added to links that is only readable by screen readers, providing more context about the link's destination while maintaining the visual design for sighted users.
+
+
+Why is using 'display: none' not recommended for hiding text from sighted users but keeping it for screen readers?
+
+Screen readers will not read content that has 'display: none', so this method prevents assistive technologies from accessing the text. Instead, a complex CSS technique is used to hide content visually while keeping it accessible to screen readers.
+
+
+What are some alternative class names for the 'visually-hidden' technique?
+
+'sr-only' (screen reader only) is another common class name used to implement the same accessibility technique of hiding content visually while keeping it accessible to screen readers.
+
+
+How can developers make links more meaningful for users with assistive technologies?
+
+By adding descriptive text within a span with the 'visually-hidden' class, developers can provide additional context about the link's destination that is only readable by screen readers, improving overall web accessibility.
+
+
+
+When designing a responsive layout with multiple sections of different widths, what CSS concept helps create reusable width constraints across different page sections?
+
+Containers or wrappers. These allow you to define reusable width constraints that can be applied to different sections - for example, one container class for narrow content sections and another for wider sections - ensuring consistent layouts across a page.
+
+
+When designing a layout with sections of different widths, what CSS concept allows you to create reusable width constraints that can be applied across multiple sections?
+
+Containers or wrappers. These are CSS classes that can be applied to different sections to control their maximum width and create consistent layouts. Different container classes can be created for different width requirements (e.g., narrow containers for text-heavy sections and wider containers for content with columns).
+
+
+class name wrapper instead container because of container query and this tag has nothing to do with containers
+
+
+BEM way of naming things with -- is:
+we are taking this .wrapper
+and we are making a slight tweak to it .wrapper--wide, .wrapper--narrow
+
+There is also a way of naming with using data attribue .wrapper[data-width="wide"]
+
+also &[data-width="wide"] and nest it
+
+& standing for initial selector
+
+
+Using rem might be a problem when with scaling as it would get bigger 
+
+Why might a developer choose to use rem units for padding and spacing?
+
+To allow consistend scaling when users change browser font sizes
+
+What CSS property is used to center a wrapper horizontally?
+
+margin-inline: auto centers a wrapper horizontally. The margin-inline property applies margin to the left and right sides (inline axis), and the auto value distributes available space equally on both sides, centering the element.
+
+
+What are two approaches for creating modifier classes in CSS?
+
+The two approaches are: 1) Using BEM naming convention with double hyphens (e.g., .wrapper--wide), 2) Using data attributes (e.g., data-width='wide').
+
+
+What is the purpose of using padding-inline on a wrapper?
+
+Padding-inline adds horizontal spacing around the content, preventing the content from touching the edges of the screen, especially on mobile devices.
+
+
+What CSS property is commonly used to control the maximum width of a wrapper element?
+
+The max-width property is used to limit the total width of a wrapper element. For example, it can be set to a specific value like 1130 pixels to prevent the wrapper from exceeding that width.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
