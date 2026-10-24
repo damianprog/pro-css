@@ -172,25 +172,42 @@
 }
 
 @layer layout {
+  .section {
+    --padding: 3.75rem;
+    padding-block: var(--padding);
+
+    @media (width > 760px) {
+      --padding: 8rem;
+    }
+  }
+
+  /* For now section compact makes padding smaller on > 760px and bigger on mobile */
+  .section--compact {
+    --padding: 4.75rem;
+  }
+
   .wrapper {
-    max-width: 1130px;
+    --wrapper-max-width: 1130px;
+    --wrapper-padding: 1rem;
+
+    max-width: var(--wrapper-max-width);
     margin-inline: auto;
-    padding-inline: 1rem;
+    padding-inline: var(--wrapper-padding);
     /* changing back to content-box just for this particular element for padding not to be included 
     in content size specified on figma 
     Other way of handling this problem is instead of changing to content-box set max-width to calc(1130px + 2rem)
-    there is also a way with using min-width
+    there is also a way with using min
     */
     box-sizing: content-box;
   }
 
   /* There is also a way of naming with using data attribue .wrapper[data-width="wide"] */
-
-  .wrapper--wide {
-    max-width: 1130px;
+  .wrapper--narrow {
+    --wrapper-max-width: 720px;
   }
 
-  .wrapper--narrow {
+  .wrapper--wide {
+    --wrapper-max-width: 1330px;
   }
 }
 

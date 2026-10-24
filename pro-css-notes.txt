@@ -449,19 +449,72 @@ What CSS property is commonly used to control the maximum width of a wrapper ele
 The max-width property is used to limit the total width of a wrapper element. For example, it can be set to a specific value like 1130 pixels to prevent the wrapper from exceeding that width.
 
 
+question:
+specificity (0,0,0)
+
+
+.wrapper {
+  .wrapper--wide { }
+}
+/* compiles to: */
+.wrapper .wrapper--wide { }
+
+In CSS nesting, a nested selector without & means a descendant. This matches a .wrapper--wide element inside a .wrapper. A BEM modifier sits on the same element:
+
+html
+<div class="wrapper wrapper--wide">
+
+Nested with &: works, but raises specificity
+
+css
+.wrapper {
+  &.wrapper--wide { }   /* → .wrapper.wrapper--wide */
+}
+
+
+A great resource of learning responsive design focused on CSS and HTML
+Apparently "Fantastic!"
+https://every-layout.dev/
+
+
+Cool blog about HTML and CSS with crude sense of humor
+https://heydonworks.com/latest/
+
+
+What is the purpose of locally scoped custom properties in CSS?
+
+Locally scoped custom properties act like levers within the code that indicate which parts of an element can be tweaked or modified, signaling to other developers which specific properties are intended to be adjustable.
+
+
+How can you apply a narrow wrapper width in HTML using a data attribute?
+
+Use the data attribute data-width="narrow" on a wrapper element, which can then be styled in CSS to adjust the maximum width to a narrower setting (e.g., 720px).
+
+
+Landmark regions should have classes for styling as they can be reused in different ways.
+
+
+Does a lot of media queries in many places, bloat the codebase?
+Every host does compression server side of your CSS file
 
 
 
+What are landmark regions in HTML?
+
+Landmark regions are HTML elements like nav, header, footer, article, section, and aside that help assistive technologies navigate websites more efficiently by allowing direct navigation to different content areas.
 
 
+Why is it recommended to give landmark regions a class instead of styling them with element selectors?
+
+Giving landmark regions a class allows for more flexibility and reusability, as landmark elements can be used in different contexts and may require unique styling beyond their default semantic meaning.
 
 
+What is the purpose of using padding-block in CSS?
+
+padding-block is a logical property that adds padding only to the top and bottom of an element, making it easier to manage vertical spacing without explicitly setting different values for top and bottom.
 
 
-
-
-
-
+What is the benefit of nesting media queries within a selector?
 
 
 
