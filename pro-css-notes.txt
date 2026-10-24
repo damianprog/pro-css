@@ -516,6 +516,107 @@ padding-block is a logical property that adds padding only to the top and bottom
 
 What is the benefit of nesting media queries within a selector?
 
+Nesting media queries within a selector keeps related styles organized, prevents repeating selectors, and makes the code easier to read and maintain by keeping all styles for an element in one place. Additionally, server-side compression efficiently handles repeated media queries, so there's no need to worry about file size bloat from having multiple media queries throughout the code.
+
+
+How can data attributes be used for modifying CSS styles?
+
+Data attributes can be used to create more descriptive and flexible style modifications, such as data-padding="compact", which allows for more semantic and readable style variations compared to traditional CSS class modifiers.
+
+
+
+Doing utility classes instead of background use background-color 
+because sometimes we need background image and background color simutanously
+
+
+Rule of thumb of utility classes vs element's own class
+Once an element needs more than 2–3 utility classes, give it its own class.
+
+
+Why should utility classes use 'background-color' instead of 'background'?
+
+To avoid shorthand overwriting issues, such as when you need both a background color and a background image
+
+
+What is the recommended approach when using utility classes?
+
+Start with generic, universal utility classes and then create more specific component classes as needed, avoiding excessive use of utility classes on a single element
+
+
+What is a good rule of thumb for when to switch from utility classes to a custom component class?
+
+When you start applying more than two or three utility classes to an element, it might be better to create a custom component class
+
+<section class="hero section section--compact">
+
+so according to the question and the answer if hero section would require more than 2 or 3 utility classes, then it's better to in this case modify .hero class?
+
+
+Mostly yes, with one correction: in that example, section and section--compact aren’t utility classes.
+
+.hero is the component class for the hero’s own styles.
+.section is a layout class. It gives the spacing (padding-block) that every section on the page shares.
+.section--compact is a BEM modifier that turns that spacing down.
+
+So the element has three classes, but each one does a separate job. That’s fine and doesn’t break the rule.
+
+
+The rule applies when you start piling up utilities:
+
+html
+<!-- Too many utilities, so move them into .hero -->
+<section class="hero section text-center text-white bg-dark fs-700">
+
+<!-- Better -->
+<section class="hero section">
+
+.hero {
+  text-align: center;
+  color: white;
+  background: var(--clr-dark);
+  font-size: var(--fs-700);
+}
+
+
+
+What are some characteristics of a good utility class?
+ 
+A good utility class does one very specific thing, such as setting a color, font size, or background color, and can be reused across different parts of a project
+
+
+What types of CSS properties are good candidates for utility classes?
+
+Background-colors and font-sizes tend to make the best utility classes. Border-radius, font-weight, and color can also be useful. Properties like margin and padding can work as utilities, though some developers find them more tedious than helpful. The key is to look for properties that need to change in isolation while other styling remains consistent.
+
+
+What is the main advantage of applying a class to heading elements (e.g., h2) rather than styling the semantic element directly?
+
+It allows different instances of the same element to have different styles
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
