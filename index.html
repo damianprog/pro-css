@@ -15,15 +15,17 @@
   <body>
     <header class="site-header">
       <div class="wrapper wrapper--wide">
-        <img src="/assets/fungi-finders.svg" alt="Fungi Finders" />
-        <nav class="primary-navigation">
-          <ul role="list">
-            <li>Hello there</li>
-            <li><a href="/">Discover</a></li>
-            <li><a href="#">Mushroom Guide</a></li>
-            <li><a href="#">FAQ</a></li>
-          </ul>
-        </nav>
+        <div class="site-header__inner">
+          <img src="/assets/fungi-finders.svg" alt="Fungi Finders" />
+          <nav class="primary-navigation">
+            <ul role="list">
+              <li>Hello there</li>
+              <li><a href="/">Discover</a></li>
+              <li><a href="#">Mushroom Guide</a></li>
+              <li><a href="#">FAQ</a></li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </header>
     <main>
@@ -60,7 +62,7 @@
             culinary treasure.
           </p>
           <!-- three columns -->
-          <div>
+          <div class="equal-columns">
             <div class="card">
               <img
                 src="/assets/outdoor-exploration.webp"
@@ -124,16 +126,18 @@
       </section>
 
       <section class="background-extra-dark section">
-        <div class="wrapper">
-          <!-- two-columns -->
-          <div>
+        <!-- two-columns -->
+        <div class="wrapper wrapper--wide">
+          <div
+            class="equal-columns equal-columns--gap-lg equal-columns-vertical-alignment"
+          >
             <div>
               <img
                 src="/assets/get-to-know.webp"
                 alt="A man on his hands and knees harvesting a wild mushroom in the forest"
               />
             </div>
-            <div>
+            <div class="font-size-lg">
               <h2 class="section-title">Get to know your mushrooms</h2>
               <p>
                 Successful and safe mushroom foraging begins with a deep
@@ -157,9 +161,11 @@
       </section>
 
       <section class="section">
+        <!-- two-columns -->
         <div class="wrapper wrapper--wide">
-          <!-- two-columns -->
-          <div>
+          <div
+            class="equal-columns equal-columns--gap-lg equal-columns-vertical-alignment"
+          >
             <div>
               <h2 class="section-title">Connect with Nature</h2>
               <p>

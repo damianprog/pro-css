@@ -140,6 +140,8 @@
     --border-radius-1: 0.25rem;
     --border-radius-2: 0.5rem;
     --border-radius-3: 0.75rem;
+
+    --equal-columns-gap: 1rem;
   }
 
   html {
@@ -169,9 +171,41 @@
   a:focus-visible {
     color: var(--text-brand-light);
   }
+
+  img {
+    border-radius: var(--border-radius-3);
+  }
 }
 
 @layer layout {
+  .equal-columns {
+    display: grid;
+    gap: var(--equal-columns-gap, 1rem);
+    align-items: var(--equal-columns-vertical-alignment, stretch);
+
+    @media (width > 760px) {
+      grid-auto-flow: column;
+      grid-auto-columns: 1fr;
+    }
+  }
+
+  .equal-columns--gap-lg {
+    --equal-columns-gap: 2rem;
+  }
+
+  .flex-equal-columns {
+    display: flex;
+
+    /* Select all the direct children */
+    > * {
+      flex: 1;
+    }
+  }
+
+  .equal-columns-vertical-alignment {
+    --equal-columns-vertical-alignment: center;
+  }
+
   .section {
     --padding: 3.75rem;
     padding-block: var(--padding);
@@ -208,6 +242,27 @@
 
   .wrapper--wide {
     --wrapper-max-width: 1330px;
+  }
+}
+
+@layer components {
+  .site-header {
+    padding-block: 1rem;
+  }
+
+  .site-header__inner {
+    display: flex;
+    gap: 0.5rem 1rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .primary-navigation {
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+    }
   }
 }
 

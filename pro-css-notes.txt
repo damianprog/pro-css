@@ -594,35 +594,157 @@ What is the main advantage of applying a class to heading elements (e.g., h2) ra
 It allows different instances of the same element to have different styles
 
 
+What is a potential downside of using utility classes for applying border radius to multiple images?
+
+It can become tedious to apply the same utility class to every single image across an entire project
+
+
+How can a base layer help simplify styling of common elements like images?
+
+By setting a default border radius for all images using a generic selector, avoiding the need to add individual utility classes
+
+
+What advantage does using a layer-based approach provide when searching for code?
+
+You can search within a specific layer name quickly, instead of searching through the entire codebase
+
+
+When might a generic CSS selector be preferable over utility classes?
+
+When a styling property is consistently applied across multiple elements, such as border radius on images
+
+
+What should developers consider when deciding between utility classes and base layer styling?
+
+Consider the potential time savings, consistency of the style, and whether applying individual utility classes becomes too tedious
+
+
+question:
+meaning of each layer
+
+
+I don't understand this example because the reason behind choosing mobile first as less resilient more proper approach is that in desktop we first write grid-template-columns: repeat(3, 1fr); and then in media query we have to overwrite this property to grid-template-columns: 1fr; for smaller screens.
+
+Isn't it exactly the same as in mobile first?
+In mobile first example I don't know why aren't we setting grid-template-columns: 1fr; as default because desktop first example suggest that mobile needs this setting so I think it should be there.
+And then we overwrite this setting for larger screens with media query
+
+Your intuition is right that grid-template-columns: 1fr would just be a different override. The difference is that you don’t need to write it at all.
+
+Why the mobile example has no 1fr
+
+display: grid without grid-template-columns already gives you one column. Every child is auto-placed into an implicit single column, one item per row, and that column stretches to the full width of the container.
+
+css
+.column-layout {
+  display: grid;
+  gap: 1rem;
+  /* already 1 column, nothing to declare */
+}
+
+Writing grid-template-columns: 1fr would describe what the browser already does. So the mobile-first version only adds a property in the media query and doesn’t take anything back.
+
+Why desktop-first is a real override
+
+In desktop-first, the 3 columns are set by you. To get rid of them on mobile, you have to undo your own decision with 1fr (or none). That’s the “overwriting” Kevin means.
+
+	Base styles	Media query
+Mobile-first	browser default (1 column)	adds 3 columns
+Desktop-first	you set 3 columns	undoes it, back to 1
+
+Why this matters beyond one line
+
+With one property, the difference is trivial. It becomes significant with real layouts. Say desktop also uses grid-column: span 2, grid-template-areas, position: sticky, or justify-self. In desktop-first, every one of those has to be reset on mobile. You also need to know the correct “neutral” value for each (auto, none, static, initial…). Forgetting one gives you a layout bug that’s hard to track down.
+
+That’s also why he says navigation can be the exception. A hamburger menu has more CSS on mobile (hidden panel, toggle, overlay) than the plain horizontal list on desktop, so there desktop-first can mean fewer overrides.
+
+The rule of thumb: put the simpler state in the base styles and add complexity in media queries.
+
+
+Intrinsic layout let's the browser decide on media queries and breakpoints
+https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/repeat#auto-fit
 
 
 
+What is an intrinsic layout in web design?
+
+An intrinsic layout is a design approach where the browser automatically determines layout based on the available space, without using media queries. It allows the browser to figure out the layout dynamically using properties like flex-wrap or grid's autofit syntax.
 
 
+What CSS property can prevent flex items from overflowing in a container?
+
+The flex-wrap property can prevent flex items from overflowing by allowing them to wrap to the next line when the container's width is insufficient. This creates a responsive layout without using media queries.
 
 
+What is the recommended approach for creating responsive navigation using flexbox?
+
+Use display: flex, flex-wrap: wrap, and gap on both the navigation container and the list inside it. This creates a flexible navigation that automatically wraps to new lines when space runs out. Use the gap shorthand with smaller vertical spacing than horizontal (e.g., gap: 0.5rem 1rem) because wrapped text items appear visually unbalanced with equal spacing due to font rendering.
 
 
+What CSS properties can help create balanced spacing when flex items wrap?
+
+Use a combination of gap values, such as gap: 0.5rem 1rem, which sets 0.5rem vertical spacing and 1rem horizontal spacing. This helps create more visually balanced spacing when flex items wrap to the next line.
 
 
+What is an intrinsic layout in CSS?
+
+An intrinsic layout is when you're not worried about media queries at all, and you're letting the browser figure out the layout on its own based on different information that you're giving it. For example, using Grid with the autofit syntax or Flexbox with flex-wrap allows the browser to determine how elements should be arranged based on available space
 
 
+For evenly sized columns instructor tends to use grid instead of using flexbox
 
 
+/* Select all the direct children */
+    > * {
+      flex: 1;
+    }
+
+It's a MUST to make columns equally sized if it is so on Figma / PSD
+
+by default they might have a little bit different sizes so it's a must to make sure sizing is in compliance with Figma / PSD
 
 
+The reason that instructor likes using grid over flexbox 
+is controlling everything through the parent 
+rather than having to do stuff on the parent
+and then have to go on the children and tweak them
 
 
+"Get to know you mushrooms" section on figma says that these two columns should not be equal as the image should be a little bit wider than the column on the right
 
 
+What are two primary layout tools in CSS for creating columns?
+
+Flexbox and Grid
+
+When using CSS Grid, what makes it advantageous for creating equal columns?
+
+Grid allows the parent to be in complete control of column layout, regardless of content, and easily creates equal-sized columns
 
 
+What is the purpose of using a data attribute like data-gap when creating column layouts?
+
+To provide flexible modifiers for adjusting column gaps dynamically, allowing easy customization of spacing between columns
 
 
+Why is it recommended to use explicit names for custom properties?
+
+To avoid naming conflicts with custom properties in different contexts and ensure clarity in CSS code
 
 
+What approach is recommended for creating breakpoints in responsive design?
+
+Use as few breakpoints as possible, visually test layout changes, and choose breakpoints that make the design look good at different screen sizes
 
 
+How can you ensure equal column widths using Flexbox?
+
+Use flex: 1 on direct child elements
+
+
+When using CSS Grid with grid-auto-flow: column and grid-auto-columns: 1fr, what is the primary benefit of the 1fr unit?
+
+It ensures all columns have exactly equal width regardless of the content
 
 
 
