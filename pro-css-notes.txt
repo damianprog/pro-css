@@ -969,6 +969,44 @@ What CSS combinator can select elements that are siblings regardless of their im
 The tilde (~) combinator selects general sibling elements that come after the specified element, unlike the plus (+) combinator which only selects the immediately adjacent sibling
 
 
+1. Season: All should be the button and the pills shouldn't be buttons
+
+2. Background is the same, color is the same, border-radius is the same, padding is different, font-size for buttons should be 16px but for pills 14px
+
+3. We should use utility classes on the to style them properly.
+
+4. button is inline-flex so as an element acts as inline but for the elements inside we apply flex 
+
+
+1. Select html element does that. We don't wan to reinvent a wheel so we should use select element and style it properly with utility classes.
+
+
+Skonczone na:
+Button layout.... socratic mode
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

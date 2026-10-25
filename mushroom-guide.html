@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;700&family=Outfit:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="/main.js" defer></script>
+    <title>Mushroom Guide</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrapper wrapper--wide">
+        <div class="site-header__inner">
+          <img src="/assets/fungi-finders.svg" alt="Fungi Finders" />
+          <button aria-controls="primary-nav" aria-expanded="false">
+            <span class="visually-hidden">Menu</span>
+            <img
+              src="/assets/hamburger.svg"
+              alt="Three lines stacked on top of eachother which kind of looks like a hamburger."
+            />
+          </button>
+          <nav id="primary-nav" class="primary-navigation">
+            <ul role="list">
+              <li><a href="/">Discover</a></li>
+              <li><a href="#">Mushroom Guide</a></li>
+              <li><a href="#">FAQ</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <main>
+      <section class="hero section section--compact flow">
+        <div class="wrapper">
+          <h1 class="hero__title">
+            Quick reference
+            <span>Mushroom Guide</span>
+          </h1>
+        </div>
+        <div class="wrapper wrapper--narrow flow">
+          <p>
+            Discover a wide array of mushrooms from around the world, each with
+            its own unique flavor profile and culinary uses.
+          </p>
+          <p>
+            Whether you're looking for earthy porcinis, delicate chanterelles,
+            or meaty shiitakes, our selection has something for every palate.
+          </p>
+          <p>
+            Explore the diverse shapes, sizes, and colors of these fungi to
+            elevate your dishes to new heights.
+          </p>
+        </div>
+      </section>
+      <section class="background-accent section">
+        <div class="wrapper">
+          <div
+            class="equal-columns equal-columns--gap-lg equal-columns--vertical-alignment"
+          >
+            <div>
+              <img
+                src="/assets/where-to-look.webp"
+                alt="Zoom on single small mushroom surrounded by moss in the forest"
+              />
+            </div>
+            <div class="flow font-size-lg text-high-contrast">
+              <h2 class="section-title">Where to look</h2>
+              <p>Different species grow in different types of environments.</p>
+              <p>
+                Forests are always a good starting place, though, with a wide
+                range of species that grow in them.
+              </p>
+              <p>
+                If you’re after something specific, you can use our reference
+                guide below to help you out.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="wrapper flow">
+          <h2 class="section-title">Get to know your mushrooms</h2>
+        </div>
+        <div class="flex">
+          <a class="button" href="#">
+            <span>Season: All</span>
+            <img src="/assets/down-arrow.svg" alt="" />
+          </a>
+          <a class="button" href="#">
+            <span>Type: All</span>
+            <img src="/assets/down-arrow.svg" alt="" />
+          </a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
