@@ -896,40 +896,40 @@ When creating an accessible interactive component, what is a recommended search 
 Search for 'a11y' followed by the specific component name (e.g., 'a11y navigation menu') to find accessibility guidelines
 
 
+When creating a hamburger menu button with an icon image, why should the alt attribute be left blank and a visually hidden span with text be added instead?
 
 
+z-index normally only works on positioned elements (position other than static). There’s an exception: flex items and grid items also respect z-index, even with position: static. A non-auto value on them creates a stacking context, just like it would on a positioned element.
+
+This only works because the button is a direct flex child. Wrap it in a <div> and the z-index stops working.
+
+Both elements must be in the same stacking context to compare 100 vs 10. Here they’re siblings in the header, so they are.
 
 
+What CSS technique can be used to add separators between list items in a navigation menu?
+
+Use the 'li + li' selector with a border-top to create separators between list items, which is a variation of the lobotomized owl selector
+(or ul > :where(:not(:first-child)))
 
 
+What property and value combination allows a z-index to work on an element without a position property?
+
+When an element is a direct child of a flex or grid container, z-index can be applied without a position property
 
 
+How can a general CSS rule like img { border-radius: 10px; } potentially cause unexpected styling issues?
+
+Such a rule might unintentionally apply border-radius to SVG icons or other elements where rounded corners are not desired, requiring specific selectors or utility classes to override the default
 
 
+What CSS approach can help with spacing between list items when adding separators?
+
+Set gap to 0 on the parent container, then use margin-block-start and padding-block-start on child elements to control spacing and add borders
 
 
+Why might you use a max-width media query (desktop-first approach) for navigation styling instead of a min-width approach?
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+When the desktop version requires minimal CSS and the mobile version needs significantly more code, using a max-width media query prevents having to revert or overwrite many styles. This is a path of least resistance approach where you can add styling only where needed rather than overwriting existing styles.
 
 
 
