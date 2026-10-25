@@ -932,9 +932,41 @@ Why might you use a max-width media query (desktop-first approach) for navigatio
 When the desktop version requires minimal CSS and the mobile version needs significantly more code, using a max-width media query prevents having to revert or overwrite many styles. This is a path of least resistance approach where you can add styling only where needed rather than overwriting existing styles.
 
 
+<script src="/main.js" defer></script>
+added defer to make sure the js is loading after the page is loaded
 
 
++ is the adjacent sibling combinator. A + B selects B only if it comes immediately after A, with the same parent.
 
+So [aria-expanded='true'] + .primary-navigation means: select the .primary-navigation that is the next sibling of an element with aria-expanded="true".
+
++ means immediate sibling 
+~ means general sibling
+
+
+How do you add a defer attribute to a script tag in HTML?
+
+Add 'defer' as an attribute to the script tag, like <script src="main.js" defer></script>, which ensures the JavaScript runs after the page is loaded
+
+
+How can you select an HTML element using an attribute selector in JavaScript?
+
+Use document.querySelector('[attribute-name="value"]'), ensuring you use different quote types for inner and outer quotes, like document.querySelector('[aria-controls="primary-nav"]')
+
+
+What method is used to dynamically change an HTML attribute's value in JavaScript?
+
+Use setAttribute() method, which takes two arguments: the attribute name and the new value, like element.setAttribute('aria-expanded', 'true')
+
+
+How can you toggle an attribute value between true and false in JavaScript?
+
+Use an if-else statement that checks the current attribute value and sets it to the opposite. Important: attribute values are always strings, so you must compare to the string 'false', not a boolean: if (navOpened === 'false') { element.setAttribute('aria-expanded', 'true') } else { element.setAttribute('aria-expanded', 'false') }
+
+
+What CSS combinator can select elements that are siblings regardless of their immediate position?
+
+The tilde (~) combinator selects general sibling elements that come after the specified element, unlike the plus (+) combinator which only selects the immediately adjacent sibling
 
 
 

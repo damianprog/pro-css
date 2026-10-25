@@ -1,3 +1,4 @@
 {
-  "htmlWhitespaceSensitivity": "ignore"
+  "htmlWhitespaceSensitivity": "ignore",
+  "singleQuote": true
 }
