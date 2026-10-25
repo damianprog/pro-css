@@ -853,18 +853,17 @@ Consider using modifier classes if you need different button styles, which allow
 Why is display: inline-flex commonly used for button styling instead of just display: block
 
 
+When styling a footer component, what are two valid approaches for applying styles?
+
+You can either use utility classes directly on the HTML elements or create a dedicated class like 'site-footer' for the footer component. The choice depends on whether you'll need to reuse the same styling pattern across multiple footers.
 
 
+Why might you choose CSS Grid with a gap over Flexbox for simple vertical spacing between footer elements?
+
+Grid with a gap requires one less line of code compared to Flexbox to achieve consistent spacing between elements, making it a more concise solution for this use case.
 
 
-
-
-
-
-
-
-
-
+Why might using higher specificity CSS selectors create problems with hover states?
 
 
 
