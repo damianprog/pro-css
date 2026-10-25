@@ -841,6 +841,51 @@ Why should nested elements with border-radius have different values?
 If nested elements have the same border-radius, the inner element will visually appear to have a larger border radius, which can look unintended
 
 
+question:
+maybe hitting ctrl + s shoud save all files in the project?
+
+
+What is a recommended approach for handling button styles across different use cases?
+
+Consider using modifier classes if you need different button styles, which allows for more adaptable and reusable CSS
+
+
+Why is display: inline-flex commonly used for button styling instead of just display: block
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
