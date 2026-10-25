@@ -772,6 +772,34 @@ Using margin-top with em values allows larger text elements to automatically cre
 What is the difference between the flow selector methods * + * and :not(:first-child)?
 
 
+once an element already needs its own class, put its one-off styles in that class instead of stacking utilities.
+
+
+What is the recommended approach when utility classes become insufficient for styling?
+
+When utility classes reach their limit, create a specific class for unique styling needs. This allows for more focused and maintainable CSS, reducing complexity and improving readability.
+
+
+What is the benefit of naming utility classes and custom properties consistently?
+
+Consistent naming reduces confusion, makes the code more intuitive, and allows for seamless switching between utility classes and custom CSS properties.
+
+
+What background image properties are recommended for a decorative background?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
