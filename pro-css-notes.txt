@@ -787,23 +787,58 @@ Consistent naming reduces confusion, makes the code more intuitive, and allows f
 
 What background image properties are recommended for a decorative background?
 
+Use background-size: cover to ensure the image fills the container, and background-position: center to center the image within the container. Since background images should be decorative, precise positioning of specific image details is less critical — the foreground text content is what matters most.
 
 
+If we have for example card and image inside of it 
+and both have border-radius
+this border-radius shouldn't be the same 
+because image border-radius will look bigger 
+So the border-radius on the image should be defined as smaller
 
 
+<div class="card">
+
+instead of 
+
+<div class="card grid-flow">
+
+Because the idea of utility class is this card gonna need it 
+and this card isn't gonna need it 
+It's the modifier but for now we want all cards to have the same flow
+
+Idea of utility class modifying background color on sections
+is that different sections want to use different backgound color
 
 
+What are three potential approaches for handling card titles in CSS?
+
+Use utility classes, 2. Create multiple specific card title classes with different modifiers, 3. Use custom properties with fallback values for flexible, adaptable styling
 
 
+Why is it recommended to avoid attaching styles directly to semantic HTML elements like h3?
+
+Because the page structure might change in the future, and the semantic heading level might need to be different (e.g., h2 or h4), which could break existing styles
 
 
+What is the benefit of using custom properties with fallback values for CSS styling?
+
+It allows for more adaptable and robust styling, enables easy global changes, and provides flexibility to modify styles at different levels of the component hierarchy
 
 
+What is the benefit of using custom properties with fallback values for CSS styling?
+
+It allows for more adaptable and robust styling, enables easy global changes, and provides flexibility to modify styles at different levels of the component hierarchy
 
 
+What CSS properties should be considered when creating a card component?
+
+Padding, background-color, border-radius, text color, font size, and grid layout with gap. For reusable card components, consider using custom properties with fallback values (e.g., var(--card-title-font-size, var(--heading-regular))) to create adaptable 'levers' that can be adjusted at different scoping levels while maintaining sensible defaults.
 
 
+Why should nested elements with border-radius have different values?
 
+If nested elements have the same border-radius, the inner element will visually appear to have a larger border radius, which can look unintended
 
 
 
