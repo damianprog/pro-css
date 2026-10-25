@@ -865,6 +865,51 @@ Grid with a gap requires one less line of code compared to Flexbox to achieve co
 
 Why might using higher specificity CSS selectors create problems with hover states?
 
+Higher specificity selectors can overwrite existing hover styles, requiring you to explicitly redefine the hover and focus states to restore the intended interactive behavior.
+
+
+When deciding between utility classes and component classes for a footer, what factors should be considered?
+
+Consider whether you'll need to repeat the same utility classes every time the component appears, and whether selecting child elements requires additional control. If child elements need different styling or spacing control is complex, a dedicated component class may be more maintainable.
+
+
+a11y and the type of thing you build, search it and find out the best practices
+
+
+What accessibility attribute can be used to connect a hamburger menu button to its associated navigation?
+
+aria-controls, which allows linking the button to a specific navigation element by its ID
+
+
+What is the recommended approach for the alt text of a hamburger menu button image?
+
+Leave the alt text blank and use a visually hidden span with text like 'menu' to provide context for assistive technologies
+
+
+What aria attribute indicates whether a navigation menu is currently open or closed?
+
+aria-expanded, which can be set to 'true' or 'false' to indicate the current state of the menu
+
+
+When creating an accessible interactive component, what is a recommended search strategy for best practices?
+
+Search for 'a11y' followed by the specific component name (e.g., 'a11y navigation menu') to find accessibility guidelines
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -17,9 +17,15 @@
       <div class="wrapper wrapper--wide">
         <div class="site-header__inner">
           <img src="/assets/fungi-finders.svg" alt="Fungi Finders" />
-          <nav class="primary-navigation">
+          <button aria-controls="primary-nav" aria-expanded="false">
+            <span class="visually-hidden">Menu</span>
+            <img
+              src="/assets/hamburger.svg"
+              alt="Three lines stacked on top of eachother which kind of looks like a hamburger."
+            />
+          </button>
+          <nav id="primary-nav" class="primary-navigation">
             <ul role="list">
-              <li>Hello there</li>
               <li><a href="/">Discover</a></li>
               <li><a href="#">Mushroom Guide</a></li>
               <li><a href="#">FAQ</a></li>
