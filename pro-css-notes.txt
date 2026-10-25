@@ -747,6 +747,37 @@ When using CSS Grid with grid-auto-flow: column and grid-auto-columns: 1fr, what
 It ensures all columns have exactly equal width regardless of the content
 
 
+question:
+design tokens vs custom properties
+
+
+a child inherits from its parent only if nothing sets that property on the child directly.
+
+
+The * + * selector selects all elements that have a direct sibling preceding them, effectively reintroducing flow and spacing between elements. It has no specificity and allows for adding margin between consecutive elements.
+
+What is the 'lobotomized owl' selector and how does it work?
+
+
+Why use em instead of rem for flow spacing?
+
+Using em for flow spacing creates a more visually appealing hierarchy because the spacing is based on the font size of each individual element, which creates more natural and proportional spacing that reflects typographic principles of proximity and hierarchy.
+
+
+Why use margin-top instead of margin-bottom for flow spacing?
+
+Using margin-top with em values allows larger text elements to automatically create bigger margins, since 1em is relative to the element's font size. This creates better visual hierarchy and proximity—larger headings naturally get more space above them without explicit adjustments. With margin-bottom, the smaller element above would determine the spacing, losing this automatic scaling benefit.
+
+
+What is the difference between the flow selector methods * + * and :not(:first-child)?
+
+
+
+
+
+
+
+
 
 
 
