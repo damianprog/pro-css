@@ -978,11 +978,53 @@ The tilde (~) combinator selects general sibling elements that come after the sp
 4. button is inline-flex so as an element acts as inline but for the elements inside we apply flex 
 
 
-1. Select html element does that. We don't wan to reinvent a wheel so we should use select element and style it properly with utility classes.
+1. 
+There are always just two pill next to eachother although their colors may differ
+
+Select html element does that. We don't wan to reinvent a wheel so we should use select element and style it properly with utility classes.
 
 
-Skonczone na:
-Button layout.... socratic mode
+2. Class would be simpler
+
+3. one class for each pill plus modifiers when color should change
+
+
+A. gdyby było 5 elementow to była by lista no ale są zawsze tylko dwa, na prawdę ul była by tu okej?
+
+
+
+na ul dam klase .pills
+i pills dostanie display: flex
+
+a stylizować będę elementy listy za pomocą li
+
+
+1. dorzucił bym do @layer reset usunięcie domyślnych styli ul bo nie ma opcji że kiedykolwiek a na pewno w tym projekcie bym potrzebowal domyslnych styli ul
+
+2. gap
+
+3. to może .pills li ustawiało by domyślne style dla wszystkich li 
+a potem modyfikatory na tych li które wymagają innego koloru
+
+
+1. dopiszę role="list" na ul
+
+3. jednak klasa pill dla wszystkich elementów plus modyfikatory dla zmiany kolorów
+
+
+a co jeśli zamiast pill--poisonous dał bym utility klase z kolorem?
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
