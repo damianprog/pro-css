@@ -1015,16 +1015,133 @@ a potem modyfikatory na tych li które wymagają innego koloru
 a co jeśli zamiast pill--poisonous dał bym utility klase z kolorem?
 
 
+Cards na drugiej page
+
+Rzeczy wspólne z kartami z pierwszej page: {
+	font-weight card__title
+
+	background-color
+
+	domyślna czcionka
+	
+	border-radius
+}
+
+Rzeczy różne z kartami z pierwszej page: {
+	font-size card__title
+	
+	layout i content
+
+}
+
+card__title może dostać modyfikatory zmieniające font-size oraz color
+
+a jakie były minusy użycia modyfikatorów dla pills?
+
+a co zamiast modyfikatorów? 
+
+modyfikatory nie powinny opisywać miejsca użycia bo może być tak że takie same cards jakie są w Get to know your mushrooms będzie trzeba wykorzystać w innych miejscach na stronie 
+
+nie widzę przeciwwskazań dla użycia modyfikatora base class card__title, card__title--white
+
+ale co jeśli kolor card__title w tych kartach będzie trzeba zmienić na inny?
+wtedy kiedy titles w tych kartach będą miały card__title--white no to się podmieni ten modyfikator w tych titles
+
+
+3. Modyfikatory nazywam po znaczeniu, nie po wyglądzie
+
+bo jeśli decyzją projektową zostanie zmieniony kolor title w takich kartach 
+to w przypadku modyfikatora z nazwą po znaczeniu, wystarczy podmienic kolor w tej jednej klasie a w przypadku modyfikatora z nazwą po wyglądzie, jeśli podmienimy kolor w takiej klasie to nazwa klasy będzie kłamać więc trzeba by bylo podmienic nazwe klasy oraz kolor
+
+
+karty na drugiej page opisują typy grzybów ale co jeśli będziemy chcieli wykorzystać takie karty do przedstawienia innego rodzaju informacji?
+
+
+to jest karta która coś opisuje, tłumaczy no ale czy tego samego nie można powiedziec o kartach z pierwszej strony?
+
+
+karty różnią się na tyle że przesadą było by powiedzenie że to ta sama karta
+
+
+Z czego się składa:
+
+Karta na pierwszej stronie {
+	obrazek
+	
+	tytuł
+	
+	opis
+
+}
+
+
+Karta na drugiej stronie {
+	tytuł
+	
+	pills
+	
+	opis
+	
+	footer z notes
+}
+
+Rczeczy wspólne to tytuł ale w innym miejscu i różniący się wyglądem
+
+Opis jest ten sam
+
+
+1. w zasadzie to chodzi o brak obrazka a nie o inne miejsce tytułu
+
+2. .card ma display grid oraz gap czyli pionowe ustawienie elementow z odpowiednim miejscem pomiędzy nimi
+padding ma być ten sam na kartach z piewszej i drugiej strony
+bg color i border radius rowniez ten sam
+
+.card zawiera również instrukcje o border radius dla obrazka ale nie wymusza aby .card posiadała obrazek.
+
+.card opisuje pudełko w ktorym zawartosc leży
+
+.card pasuje zarówno do kart z pierwszej strony jak i dla kart z drugiej strony
+
+
+może modyfikator sekcji class="section section--mushrooms-types"
+i wtedy .section--mushrooms-types i w niej podmienić custom property --card-title-color?
+
+
+komponent .card powinien być reużywalny i nie powinien wiedzieć w jakiej sekcji stoi. klasa .card__title--mushroom-types nie jest reużywalna, nie miała by żadnego sensu jeśli znalazła by się w innej sekcji. Modyfikacja font-size oraz color ma sens tylko dla tej sekcji. Więc instrukcje specyficzne dla card tylko w tej sekcji mają najwięcej sensu jeśli umieści się je w modyfikatorze klasy dla tej sekcji. Dodatkowo rozwiązanie z podmianą custom property w  .section--mushrooms-types nie zwiększa specificity. nazwa klasy  .section--mushrooms-types jest adekwatna.
+
+
+skoro card title a nie card header to może card notes będzie odpowiednią nazwą klasy?
 
 
 
+w zasadzie to pill czy .pills__pill?
 
 
+czy umiejscowienie .section--mushroom-types w pliku css jest prawidłowe?
+umieściłem je tuż pod miejscem które ta klasa ma modyfikować
 
 
+1. rola .section--mushroom-types różnie się od ról section i section--compact
+modyfikator tu nie pasuje. to w takim razie class="section mushroom-types"? czy jakoś inaczej?
+
+2. w .section--mushroom-types powinniśmy skorzystac z tokenów znaczeniowych bo określają one rzeczy spójnie dla całej strony. W --card-title-font-size powinniśmy skorzystać z tokena oznaczającego mniejszy heading na tej stronie. 
 
 
+1. myślałem nad @layer components ale jednak odpada bo np. .hero to jest rzecz którą już teraz używamy na pierwszej i na drugiej page więc jest reużywalna. Ale sekcja mushroom-types jest na tyle specyficzna że nie będziemy mieli drugiej takiej samej sekcji. Więc zróbmy osobny layer. Jak ten layer nazwać? btw. nie mam zamiaru grzebać w atrybucie style w html. Oddzielamy warstwe szkieletu strony od styli.
 
+może @layer custom-page-components?
+
+odpada
+
+klasy w tej layer:
+
+należa do jednej konkretnej strony? Tak
+
+są wyjątkami od ogólnych reguł? Tak
+
+nadpisują domyślne zachowanie komponentów? Tak
+
+@layer page-modifiers?
 
 
 

@@ -383,6 +383,18 @@
     color: var(--card-title-color, var(--text-brand));
   }
 
+  .card__footer {
+    font-size: var(--font-size-sm);
+    padding: 12px;
+    background-color: var(--background-extra-light);
+    border-radius: var(--border-radius-2);
+  }
+
+  .section--mushroom-types {
+    --card-title-font-size: var(--fs-600);
+    --card-title-color: var(--text-high-contrast);
+  }
+
   .button {
     display: inline-flex;
     font-size: var(--font-size-md);

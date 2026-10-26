@@ -57,8 +57,17 @@ Najpierw myślałem o modyfikatorze rozmiaru `.pill--lg`. Ale padding selecta je
 **5. Jedna klasa układu `.pills` dla obu grup**
 Oba wrappery potrzebują `display: flex` + `gap`. Selecty też mają klasę `.pill`, więc rząd filtrów to także „grupa pilli” i nazwa `.pills` pasuje do obu. `gap` daję na rodzicu, a dzieci nie mają marginesów.
 
-**6. Reset listy i `role="list"`**
-Reset `ul` (bez kropek, paddingu i marginesów) trafia do `@layer reset`, bo w tym projekcie nigdy nie potrzebuję domyślnych stylów listy. **Pułapka:** Safari z VoiceOverem przestaje traktować `<ul>` jako listę, kiedy ma `list-style: none`. Rozwiązanie: dodać `role="list"` do `<ul>`.
+**6. Reset listy przez `role="list"`**
+`@layer reset` ma już regułę, która resetuje listy, ale tylko te z atrybutem `role="list"`:
+```css
+/* https://www.scottohara.me/blog/2019/01/12/lists-and-safari.html */
+[role='list'] {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+```
+Nie dodawałem osobnego resetu dla `ul`. Wystarczy dopisać `role="list"` do `<ul>` i reset zadziała. **Dlaczego tak:** Safari z VoiceOverem przestaje traktować `<ul>` jako listę, kiedy ma `list-style: none`. `role="list"` przywraca semantykę listy, a przy okazji jest „włącznikiem” resetu. Listy bez tego atrybutu zachowują domyślne style.
 
 **7. Dostępne etykiety selectów**
 Tekst opcji („Season: All”) zmienia się po wyborze, więc nie może pełnić roli etykiety. Owijam select w `<label>` (powiązanie niejawne, bez `for` i `id`) ze spanem `.visually-hidden`.
