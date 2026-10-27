@@ -156,7 +156,7 @@ Składnia wielowartościowa: krawędź + odległość. `center` nie przyjmuje od
 
 ### Otwarte punkty
 
-- [ ] Pille w kartach: `<ul class="pills" role="list">` + `<li class="pill">`
+- [x] Pille w kartach: `<ul class="pills" role="list">` + `<li class="pill">` (zob. wpis „Karty grzybów”; `.pills` dostało też `flex-wrap: wrap`)
 - [ ] Decyzja: czy „edible” to domyślna `.pill`, czy dostaje własny modyfikator?
 - [ ] `.pill--poisonous` (pod `.pill`): tylko `background-color`, czy też kolor tekstu?
 - [ ] Kontrast białego tekstu na `--clr-green-400` (hover i fokus). Sprawdzić w DevTools względem WCAG AA (4.5:1 dla zwykłego tekstu). Dotyczy też `.button`.
@@ -171,3 +171,253 @@ Składnia wielowartościowa: krawędź + odległość. `center` nie przyjmuje od
 5. Plik CSS w `css/` wskazuje na `assets/arrow.svg` w korzeniu projektu. Jaka jest ścieżka?
 6. Dlaczego etykieta `.visually-hidden` wewnątrz kontenera flex nie dodaje odstępu?
 7. Po co `role="list"` na `<ul>` z `list-style: none`?
+
+---
+
+## Karty grzybów: ten sam `.card`, inna zawartość i kontekst sekcji
+
+**Data:** 2026-10-27
+**Projekt:** FungiFinders (`mushroom-guide.html`, sekcja „Get to know your mushrooms”)
+**Status:** struktura i style gotowe, teraz wstawiam treść z Figmy
+
+### Problem
+
+Na drugiej stronie są karty grzybów. Na pierwszy rzut oka wyglądają jak zupełnie inny komponent niż karty z pierwszej strony („Outdoor Exploration” itd.): mają większy, biały tytuł, pille i stopkę z notatkami. Pytanie: nowy komponent, modyfikator `.card`, czy coś jeszcze innego?
+
+### Rozbiór: z czego składają się karty
+
+| Część          | Pierwsza strona | Druga strona       |
+| -------------- | --------------- | ------------------ |
+| obrazek        | ✅              | ❌                 |
+| tytuł          | ✅              | ✅ (inny wygląd)   |
+| pille          | ❌              | ✅                 |
+| opis           | ✅              | ✅ (taki sam)      |
+| stopka z notes | ❌              | ✅                 |
+
+Wspólne pudełko: tło, `border-radius`, padding, pionowy układ z `gap`.
+
+Wrażenie „są na tyle różne, że to nie może być ta sama karta” nie jest argumentem. Dopiero wypisanie części pokazało konkrety. Tytuł nie jest „w innym miejscu”, po prostu nad nim nie ma obrazka.
+
+### Decyzje i dlaczego
+
+**1. `.card` to pudełko, a nie przepis na zawartość**
+Sprawdziłem, co `.card` naprawdę ustawia: układ, `gap`, padding, tło, zaokrąglenie i zaokrąglenie obrazka, *jeśli* jakiś jest. Nic nie wymaga obrazka ani nie zabrania pilli czy stopki. Dlatego obie karty to `.card`. Różna zawartość leży w tym samym pudełku i nie potrzebuję modyfikatora od „layoutu i contentu”.
+
+**2. Nazwa modyfikatora: ani według wyglądu, ani według treści**
+- `card__title--white` odpada z tego samego powodu co `.bg-red`: przy zmianie koloru klasa kłamie i trzeba ją podmieniać w każdej karcie.
+- `card--mushroom` (według treści) kłamie, gdy w takiej karcie pojawi się coś innego niż grzyb.
+- „Karta, która coś opisuje” niczego nie odróżnia, bo karty z pierwszej strony też coś opisują.
+
+Wniosek: kiedy nie da się znaleźć nazwy wariantu, warto sprawdzić, czy to w ogóle *jest* wariant. Tutaj nie był.
+
+**3. Kontekst ustawia zmienne, a komponent ich używa**
+`.card__title` już wcześniej czytał zmienne z wartościami domyślnymi:
+```css
+.card__title {
+  font-size: var(--card-title-font-size, var(--font-size-heading-sm));
+  color: var(--card-title-color, var(--text-brand));
+}
+```
+Zmienne CSS są dziedziczone, więc wystarczy ustawić je na sekcji. Wszystkie tytuły kart w środku je dostaną, a kod `.card__title` się nie zmienia.
+
+Dlaczego to lepsze niż `.card__title--mushroom-types`:
+- karta nic nie wie o sekcjach, tylko wystawia „pokrętła”, a kontekst je przekręca,
+- nowa sekcja z innym kolorem tytułów to zero zmian w komponencie karty, a nie kolejny modyfikator,
+- „wiedza o miejscu” leży w jedynym miejscu, które i tak jest jednorazowe, czyli w sekcji.
+
+**4. `class="section mushroom-types"`, a nie `section--mushroom-types`**
+`.section--compact` zmienia *samą sekcję* (padding). `.mushroom-types` zmienia *karty w środku*. To inna rola, więc modyfikator `.section` nie pasuje. To osobna klasa, która tylko stoi na tym samym elemencie.
+
+Nie ustawiam zmiennych przez atrybut `style` w HTML, bo HTML to struktura, a CSS to wygląd.
+
+**5. Nowa warstwa `@layer pages`**
+`.mushroom-types` nie pasuje do żadnej istniejącej warstwy: to nie layout, nie komponent wielokrotnego użytku (w przeciwieństwie do `.hero`, który jest na dwóch stronach) i nie utility.
+
+Odrzucone nazwy:
+- `custom-page-components`: „components” przeczy wnioskowi, że to nie jest komponent, a „custom” nic nie mówi, bo cały CSS jest „custom”.
+- `page-modifiers`: „modyfikator” ma już w projekcie konkretne znaczenie (klasy z `--`), a tu ich nie ma.
+
+`pages` mówi tylko, *do czego* należą style. Kolejność:
+```
+reset → base → layout → components → pages → utilities
+```
+- **za `components`**, bo style strony czasem muszą nadpisać komponent,
+- **przed `utilities`**, bo utility to świadoma decyzja na konkretnym elemencie i ma wygrywać zawsze.
+
+**6. Token znaczeniowy `--font-size-heading-xs`**
+Tytuł w tych kartach potrzebuje `--fs-600`, czyli mniej niż najmniejszy dotychczasowy nagłówek (`--font-size-heading-sm` = `--fs-700`). Najpierw użyłem `--font-size-lg`, bo ma tę samą wartość, ale korzystają z niego linki w mobilnej nawigacji i „Happy Foraging!” w stopce strony. Gdyby ktoś je powiększył, tytuły kart urosłyby razem z nimi, bez powodu.
+
+Dodałem więc `--font-size-heading-xs: var(--fs-600)`.
+- `--fs-600` mówi **ile** (stopień skali).
+- `--font-size-heading-xs` i `--font-size-lg` mówią **do czego**.
+
+Dwa tokeny wskazujące na tę samą wartość to nie powielanie. Te elementy dziś *przypadkiem* mają ten sam rozmiar. Wspólny token dostają tylko rzeczy, które mają się zmieniać razem.
+
+**7. `card__footer`, a nie `card__notes`**
+Nazwa elementu opisuje jego **rolę** w karcie, a nie treść. „notes” przestaje być prawdą, gdy na dole innej karty pojawi się np. cena z przyciskiem. „footer” pasuje do każdej karty, tak jak `__title`.
+
+**8. `<article>` dla kart grzybów, `<div>` dla kart z pierwszej strony**
+Test: *czy ta treść ma sens, kiedy wyjmę ją ze strony i wyślę komuś osobno?*
+- „Chanterelle”: tak, to pełny opis grzyba → `<article>` (jak artykuł w gazecie: tytuł, treść, stopka).
+- „Culinary Delights”: nie, bez strony nie wiadomo, czego dotyczy. To punkt z listy zalet → `<div>`.
+
+`<section>` to *część większej całości*, a `<article>` to *samodzielna treść*.
+
+Ta sama klasa `.card` stoi na `<div>` i na `<article>`. Klasa odpowiada za wygląd, element za znaczenie i jedno nie zależy od drugiego.
+
+**9. `<footer>` wewnątrz `<article>`**
+`<footer>` nie musi być stopką strony. Wewnątrz `<article>` jest stopką tego artykułu.
+
+**10. Karty równej wysokości, pille bez rozciągania, stopka na dole**
+Objaw: kiedy jedna karta ma więcej pilli, w pozostałych pille robią się wyższe, a stopka „puchnie”.
+
+Łańcuch przyczyn:
+1. `.equal-columns` ma `align-items: stretch`, więc wszystkie karty w rzędzie dostają wysokość najwyższej. **To chcę zachować.**
+2. `.card` był gridem. Dodatkowa wysokość rozkładała się **po równo między wszystkie wiersze** (tytuł, pille, opis, stopka). Dlatego przerwy wyglądały na „równe”: wszystkie urosły o tyle samo. Punkt odniesienia to najwyższa karta, bo ona nie jest rozciągana.
+3. `.pills` to flex z domyślnym `align-items: stretch`, więc pille rosły razem ze swoim wierszem.
+
+Po drodze: `align-items: start` na `.card` zmniejszyło elementy, ale wiersze nadal rosły. Potrzebne było `align-content: start`.
+
+Ostatecznie stopka ma być przyklejona do dołu. Rozważyłem dwa podejścia:
+- `grid-template-rows: auto auto 1fr auto` odpada, bo `.card` musiałby wiedzieć, ile ma dzieci (pierwsza strona: 3, grzyby: 4).
+- **flex w kolumnie i `margin-top: auto` na stopce**. Wiedza „stoję na dole” należy do stopki, więc każda przyszła karta ze stopką zachowa się tak samo.
+
+**11. `<strong>`, a nie `<b>` dla „Important notes:”**
+- `<strong>` oznacza, że coś jest ważne, poważne albo pilne (ostrzeżenie).
+- `<b>` zwraca uwagę, ale nie dodaje ważności (słowa kluczowe, nazwa produktu).
+- `<em>` zmienia akcent w zdaniu.
+- `<i>` oznacza tekst w innym tonie, np. nazwę łacińską: `<i lang="la">Cantharellus cibarius</i>`. `lang` sprawia, że czytnik ekranu przeczyta ją z łacińską wymową.
+
+### Poznane techniki
+
+**Łączenie klas w selektorze**
+| Selektor | Co łapie |
+|---|---|
+| `.a.b` | jeden element z **obiema** klasami, (0,2,0) |
+| `.a .b` | `.b` **wewnątrz** `.a` |
+| `.a, .b` | element z **którąkolwiek** klasą |
+
+**Warstwy wygrywają ze specyficznością**
+Kiedy reguły są w różnych warstwach, decyduje **kolejność warstw**, a nie specyficzność ani miejsce w pliku. Nawet `#id` w `components` przegra z jedną klasą w `pages`. Specyficzność i kolejność w pliku liczą się tylko w obrębie tej samej warstwy.
+
+Kolejność warstw bez deklaracji wynika z kolejności ich pierwszego pojawienia się w pliku. Można ją zapisać wprost na górze:
+```css
+@layer reset, base, layout, components, pages, utilities;
+```
+
+**Dziedziczenie a reguła bezpośrednia**
+`.mushroom-types { color: white; }` na `<section>` **nie** zmieni koloru tytułu, bo `.card__title` ustawia `color` bezpośrednio na `<h3>`. Wartość odziedziczona zawsze przegrywa z regułą, która trafia w element, nawet z wcześniejszej warstwy. Zmienne działają, bo `.card__title` sam *czyta* odziedziczoną zmienną.
+
+**`align-items` w gridzie i we flexie**
+| | Co wyrównuje | Oś |
+|---|---|---|
+| flex | dzieci w *linii flexa* | poprzeczna |
+| grid | dzieci w *ich komórce* | blokowa |
+
+`stretch` w obu przypadkach znaczy „wypełnij dostępną wysokość”.
+
+**`align-items` a `align-content`**
+- `align-items` ustawia, gdzie stoi **element w swoim wierszu**.
+- `align-content` ustawia, jak **same wiersze** dzielą przestrzeń kontenera.
+
+**`margin-top: auto` we flexie**
+Automatyczny margines zjada całą wolną przestrzeń po swojej stronie i dopycha element na koniec osi.
+
+**`flex-wrap: wrap`**
+Bez niego flex upycha wszystko w jednym rzędzie (elementy się ściskają albo wychodzą poza kontener). `gap` działa też między zawiniętymi rzędami.
+
+**DevTools: plakietki `grid` / `flex`**
+W panelu Elements plakietka obok elementu włącza nakładkę z liniami siatki lub flexa. Dzięki niej widać, który wiersz rośnie i dlaczego.
+
+### Aktualny kod
+
+```html
+<section class="section mushroom-types">
+  <div class="wrapper flow">
+    <h2 class="section-title">Get to know your mushrooms</h2>
+    <!-- filtry: .pills z selectami -->
+    <div class="equal-columns">
+      <article class="card">
+        <h3 class="card__title">Chanterelle</h3>
+        <ul role="list" class="pills">
+          <li class="pill">edible</li>
+          <li class="pill">summer</li>
+        </ul>
+        <p>Golden-yellow, funnel-shaped mushroom with false gills</p>
+        <footer class="card__footer">
+          Important notes: Has toxic look-alikes - learn proper
+          identification
+        </footer>
+      </article>
+    </div>
+  </div>
+</section>
+```
+
+```css
+/* @layer base, :root */
+--font-size-heading-xs: var(--fs-600);
+
+/* @layer components */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap, 1rem);
+  padding: 1rem;
+  background-color: var(--background-light);
+  border-radius: var(--border-radius-3);
+
+  img {
+    border-radius: var(--border-radius-2);
+  }
+}
+
+.card__title {
+  font-size: var(--card-title-font-size, var(--font-size-heading-sm));
+  color: var(--card-title-color, var(--text-brand));
+}
+
+.card__footer {
+  font-size: var(--font-size-sm);
+  padding: 12px;
+  background-color: var(--background-extra-light);
+  border-radius: var(--border-radius-2);
+  margin-top: auto;
+}
+
+.pills {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: start;
+}
+
+/* @layer pages */
+.mushroom-types {
+  --card-title-font-size: var(--font-size-heading-xs);
+  --card-title-color: var(--text-high-contrast);
+}
+```
+
+### Otwarte punkty
+
+- [ ] `align-items: start` na `.pills`: usunąć (nic teraz nie robi) czy zostawić jako zabezpieczenie? Jeśli zostaje, to z komentarzem, po co.
+- [ ] Usunąć `align-content: start` z `.card`, jeśli jeszcze gdzieś zostało (we flexie w kolumnie bez wrap nie działa).
+- [ ] Sprawdzić obrazki w kartach na `index.html` po zmianie `.card` na flex.
+- [ ] Zadeklarować kolejność warstw na górze `style.css`.
+- [ ] `<strong>` w stopce i ewentualnie `<i lang="la">` z nazwą łacińską.
+- [ ] Sprawdzić `gap` między zawiniętymi rzędami pilli i zachowanie rzędu filtrów przy 320px.
+
+### Pytania kontrolne
+
+1. Po czym poznać, czy dwie karty to różne komponenty, czy ten sam komponent z inną zawartością?
+2. Dlaczego `.card__title--mushroom-types` jest gorsze niż ustawienie `--card-title-color` na sekcji?
+3. Dlaczego `.mushroom-types` nie jest modyfikatorem `.section`?
+4. Reguła w `@layer components` ma selektor z `#id`, a reguła w `@layer pages` jedną klasę. Która wygra i dlaczego?
+5. Dlaczego `.mushroom-types { color: white; }` nie zmieni koloru `.card__title`?
+6. Po co osobny token `--font-size-heading-xs`, skoro `--font-size-lg` ma tę samą wartość?
+7. `card__footer` czy `card__notes`, i dlaczego?
+8. Jaki test rozstrzyga między `<article>` a `<div>`?
+9. Czym różni się `align-items` od `align-content`?
+10. Dlaczego `margin-top: auto` na stopce jest lepsze niż `grid-template-rows: auto auto 1fr auto` na karcie?
+11. `<strong>`, `<b>`, `<em>` i `<i>`: kiedy który?

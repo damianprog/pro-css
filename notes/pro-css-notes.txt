@@ -1143,6 +1143,102 @@ nadpisują domyślne zachowanie komponentów? Tak
 
 @layer page-modifiers?
 
+ .card__title {
+    font-size: var(--card-title-font-size, var(--font-size-heading-sm));
+    color: var(--card-title-color, var(--text-brand));
+  }
+
+
+1. jeśli bym zostawił --font-size-lg i trzeba by było zmienić jego wartość to jeśli tytuly kart grzybów by z niego korzystały to zostały by zmienione i stały by sie wtym przypadku mniejsze. A jeśli będzie tam --font-size-heading-xs które nadal by wskazywało na --fs-600 to by sie nie zmieniło. Myślę że to był by pożądany efekt bo czym innym są lnki w mobilnej nawigacji, "Happy Foraging!" w footer a czym innym tytuły kart które są ewidentnie headerami.
+
+
+Wspólny token mają tylko te elementy, które mają się zmieniać razem.
+
+2. --font-size-heading-* opisują rozmiar headingów i wszystkie headingi korzystają z tego namingu co sprawia że headingi mają spójne style. 
+
+
+Czy karty powinny być czasami wyższe niż ich zawartość w celu zrównania wszystkich kart ze sobą?
+
+equal-columns to jest grid, grid też ma align-items?
+
+
+ok ale chce żeby było tak aby karty się rozciągały i zachowały taką samą wysokość. Ale nie chce aby wysokość pilli się rozciągała więc należy się zająć w tym przypadku .pills bo .equal-columns ze stretchem to jest pożądane zachowanie w tej sytuacji.
+
+
+1. align-content: start
+
+2. align-items: start nie jest już potrzebne bo elementy w wierszach już mają wysokość swojego contentu i elementy już są na początku tych wierszy.
+
+3. nic nie psuje dodanie align-content: start do .card
+
+
+1. to rozwiązanie naruszy zasadę żę .card nie musi wiedziec co lezy w srodku i sprawi .card znacznie mniej reużywalnym, więc odpada.
+
+2. stopka może wiedzieć że ma stać na dole karty i jeśli w przyszłosci pojawi sie karta ze stopką to tam stopka również powinna przylegać do dołu aby design był spójny.
+
+3. z tego co widzę to gap działa tak samo w grid jak i we flexie
+
+
+gap: var(--card-gap, 1rem);
+
+dlaczego zmienna --card-gap ?
+
+
+1. jak nazwać modyfikatory background kolorów dla pill?
+
+czy mogą być nazwane po tym jaka jest ich zawartość?
+
+na pewno nie powinny być nazwane po tym jak wyglądają np. --pill-blue dla pilli ze "spring"
+bo jeśli padnie decyzja aby pille dla spring zmieniły kolor to trzeba było by podmieniać klasy we wszystkich pillach ze spring
+a jeśli klasa nazywała by sie --pill-spring to wystarczyło by podmienić instrukcje w selektorze tej klasy
+ogólnie te kolory są reużywalne bo wszystkie są zdefiniowane w @layer base
+
+to w takim razie moge nazwać te modyfikatory po contencie pilli? np. pill spring bedzie mial --pill-spring, pill toxic --pill-toxic itd.?
+
+
+karta nie powinna wiedzieć o tym jaki kontent sie w niej znajduje tylko ma być uniwersalnym pudełkiem z poprawnymi odstępami
+
+chodzi o to aby kolor dla pills z napisem spring był spójny dla wszystkich takich pilli wewnątrz tych kart. 
+
+Ale nie jestem pewny jak uzasadnić te pozorną sprzeczność
+
+
+desgin figmy nie wskazuje na to aby wygląd pudełka zawierającego opis grzyba, sygnalizował że teraz opisujemy grzyba.
+
+natomiast design pilli zawierającej spring ma sygnalizować że teraz opisujemy pore roku spring.
+
+
+1. pill--spring
+
+2. powinny bo może kiedyś być tak że zdecydujemy że edible czy summer mają teraz mieć różne kolory
+
+
+powinniśmy stworzyć nową zmienną dla background koloru w pill
+np. --pill-background i wtedy w .pill zrobic 
+background-color: var(--pill-background, --background-accent-main);
+
+wtedy w .pill--spring zrobić --pill-background: var(--clr-teal-500)
+
+
+1. background-color: var(--pill-background, var(--background-accent-main));
+
+2. w tym przypadku skoro zmienna dotyczyła by tylko jednej właściwości, tyle samo kodu czyli jedna linia wystarczyła by w modyfikatorach aby tę właściwość zmienić
+więc złożoność kodu w tym przypadku była by taka sama. Pytanie tylko czy chcemy na zapas tworzyć zmienną bo w przyszłości może być tak że bg color był by wykorzystany w różnych właściwościach? Ja myślę że nie i że zmienna tutaj mogła by nawet obecnie wprowadzać w błąd bo właściwie to nie jest ona nam teraz potrzebna. (na figmie nic nie wskazuje na to aby ta zmienna była teraz potrzebna)
+
+Zasada do zapamiętania: zmienna to narzędzie na konkretny problem, a nie domyślny sposób pisania CSS.
+
+uważam że strong na całej stronie powinn
+
+
+1. chcemy aby w jednym rzędzie były 4 karty a reszta żeby się zawijała i jest so specyficzne dla kart w mushroom-types
+
+
+
+
+
+
+
+
 
 
 
