@@ -1230,10 +1230,14 @@ Zasada do zapamiętania: zmienna to narzędzie na konkretny problem, a nie domy�
 uważam że strong na całej stronie powinn
 
 
-1. chcemy aby w jednym rzędzie były 4 karty a reszta żeby się zawijała i jest so specyficzne dla kart w mushroom-types
+1. chcemy aby w jednym rzędzie były 4 karty a reszta żeby się zawijała i jest to specyficzne dla kart w mushroom-types
 
 
 
+
+
+
+chcemy aby pogrubienie w fira sans domyślnie używało 500
 
 
 
