@@ -1234,22 +1234,63 @@ uważam że strong na całej stronie powinn
 
 
 
-
-
-
 chcemy aby pogrubienie w fira sans domyślnie używało 500
 
 
+1. .pills li oznacza większą specyficzność bo chwytamy ten element li który jest zawarty w pills
+sama klasa na elemencie ma mniejszą specyficzność a kierujemy się zasadą najmniejszej potrzebnej specyficzności.
+
+2. .card__title do ustawienia koloru korzysta ze zmiennej którą zmieniamy wewnątrz instrukcji .mushroom-types. Ta instrukcja jest zawarta w @layer pages zatem jest dalej w kodzie i wygrywa nad domyślną
 
 
+1.
+(0,1,1)
+
+(0,1,0)
+
+modyfikator występuje później w kodzie niż domyślny styl
 
 
+213.194px 213.212px 213.212px 213.212px 213.194px
 
 
+szerokość została ustalona w grid-auto-columns: 1fr
+grid-auto-flow: column działa tak że najpierw idzie 
 
 
+1. karta druga stoi obok karty pierwszej 
+2. karta 3 stoi obok karty drugiej 
+czyli mamy 3 karty w jednym row
 
 
+Potem zmień column na row
+
+
+1. karta 2 jest pod kartą pierwszą 
+2. karta 3 jest pod kartą drugą
+
+3 karty w jednej kolumnie
+
+
+1. kiedy pierwsza kolumna jest wypełniona to przechodzi do drugiego rzędu i tam wstawia następny element.
+2. kiedy pierwsza kolumna jest wypełniona to próbuje przejść do następnego rzędu i próbuje tam wstawić element ale rząd jest tylko 1 zatem wstawia element w pierwszym rzędzie w następnej kolumnie 
+
+
+Przy grid-auto-flow: row grid przechodzi do następnego rzędu, kiedy skończą się kolumny. Przy column przechodzi do następnej kolumny, kiedy skończą się rzędy.
+
+
+1. tyle ile jest dzieci, każde dziecko ma dostać kolumne równej szerokości w dostępnym miejscu
+
+2. żeby nazwa klasy nie kłamała i żeby każdy element miał równą szerokość w dostępnym miejscu, musiały by być 4 elementy a klasa equal-columns musi działać również dla miejsc gdzie są np. 2 elementy albo 3
+
+
+z jednej strony to nie jest ten sam układ skoro nie chodzi nam o to aby każde dziecko wewnątrz tej klasy miało równą szerokość
+
+
+i w przypadku dla jednego rzędu oraz dla więcej niz jednego rzędu, chcemy aby kolumny były równe 
+
+
+1. wygrała by ta klasa która jest pozniej w kodzie css czy w class="" w html?
 
 
 

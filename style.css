@@ -254,6 +254,15 @@
     --equal-columns-vertical-alignment: center;
   }
 
+  .equal-columns-wrap {
+    display: grid;
+    gap: 1rem;
+    grid-auto-flow: row;
+    grid-template-columns: var(--equal-columns-wrap-template, 1fr);
+
+    /* @media (width ) */
+  }
+
   .section {
     --padding: 3.75rem;
     padding-block: var(--padding);
@@ -512,6 +521,7 @@
   .mushroom-types {
     --card-title-font-size: var(--font-size-heading-xs);
     --card-title-color: var(--text-high-contrast);
+    --equal-columns-wrap-template: repeat(4, 1fr);
   }
 }
 
