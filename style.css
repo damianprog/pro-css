@@ -255,12 +255,11 @@
   }
 
   .equal-columns-wrap {
+    --column-min-width: 1fr;
+
     display: grid;
     gap: 1rem;
-    grid-auto-flow: row;
-    grid-template-columns: var(--equal-columns-wrap-template, 1fr);
-
-    /* @media (width ) */
+    grid-template-columns: repeat(auto-fill, minmax(--column-min-width, 1fr));
   }
 
   .section {
@@ -521,7 +520,10 @@
   .mushroom-types {
     --card-title-font-size: var(--font-size-heading-xs);
     --card-title-color: var(--text-high-contrast);
-    --equal-columns-wrap-template: repeat(4, 1fr);
+
+    @media (width > 760px) {
+      --equal-columns-wrap-template: repeat(4, 1fr);
+    }
   }
 }
 

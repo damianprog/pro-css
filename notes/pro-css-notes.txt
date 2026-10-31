@@ -1293,6 +1293,88 @@ i w przypadku dla jednego rzędu oraz dla więcej niz jednego rzędu, chcemy aby
 1. wygrała by ta klasa która jest pozniej w kodzie css czy w class="" w html?
 
 
+minimalna sensowna szerokość karty to 270px
+
+4 x 270 = 1080
+
+1080 + 48 = 1128
+
+1128 + 32 = 1160
+
+
+1100 - 32 = 1068
+
+1068 - 16 = 1052
+
+1052 / 2 = 526
+
+
+
+3 * 270 = 810
+
+810 + 32 = 842
+
+842 + 32 = 874px
+
+Tuż przed progiem 3 kolumn
+
+873 - 32 - 16 = 825
+
+825 / 2 = 412.5
+
+Tuż przed progiem 4 kolumn
+
+1159 - 32 - 32 = 1095
+
+1095 / 3 = 365
+
+
+
+liczba 270 wzięła sie nie z tego jak poniżej tej wartosci zaczyna wyglądać karta mushroom tylko z tego że strona robi się szersza dodając padding na zwenatrz kart i wszystko zaczyna wyglądać brzydko. 
+
+16px gap to uniwersalny gap dla wszystkich szerokości
+
+32px padding to uniwersalny padding dla wszystkich szerokosci
+
+1,2,3,4 kolumny zostaly wyliczone na podstawie karty o najmniejszej sensownej szerokosci
+
+Natomiast inna sekcja z innymi kartami dla ktorej inne liczby mialy by sens 
+
+
+taka sekcja musiała by modyfikować wszystkie media query w .mushroom-types
+
+zmienną definiującą najmniejszą sensowną szerokość karty
+
+grid-template-columns: repeat(auto-fill,270px)
+
+1. liczba kolumn sie zwiększa w miare zwiększania sie okna
+2. wolne miejsce po prawej jest puste
+
+grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+
+
+grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+
+rachunki sie zgadzają bo liczylismy je na podstawie najmniejszej sensownej szerokosci karty którą to szerokosc ustalilismy na 270px zatem nie potrzebne są media queries, grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)) rozwiązuje te problemy i w dodatku można z tego zrobić uniwersalną instrukcje dodając zmienną określającą minimalną szerokość karty!
+
+
+270px * 5 = 1350
+
+1350 + 64 = 1414
+
+1414 + 32 = 1446
+
+wniosek jest taki że dla 5 kart potrzebna jest minimalna szerokość 1446px
+
+ale dlaczego w takim razie od tej szerokosci nie ma 5 kolumn?
+
+domyślna maksymalna szerokość wrappera to 1130px 
+
+
+
+
+
+
 
 
 
