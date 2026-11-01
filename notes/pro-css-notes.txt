@@ -1368,7 +1368,7 @@ wniosek jest taki że dla 5 kart potrzebna jest minimalna szerokość 1446px
 
 ale dlaczego w takim razie od tej szerokosci nie ma 5 kolumn?
 
-domyślna maksymalna szerokość wrappera to 1130px 
+domyślna maksymalna szerokość wrappera to 1130px zatem wrapper w którym są karty nie staje sie szerszy niz 1130px
 
 
 
