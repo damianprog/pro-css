@@ -524,6 +524,22 @@
     --card-title-font-size: var(--font-size-heading-xs);
     --card-title-color: var(--text-high-contrast);
   }
+
+  .faq-cards {
+    --card-title-font-size: var(--font-size-heading-xs);
+    --card-title-color: var(--text-high-contrast);
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .faq-cards > :nth-child(3) {
+    grid-row: span 2;
+  }
+
+  .faq-cards > :nth-child(4) {
+    grid-column: span 2;
+  }
 }
 
 @layer utilities {
