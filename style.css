@@ -255,11 +255,14 @@
   }
 
   .equal-columns-wrap {
-    --column-min-width: 1fr;
+    --column-min-width: 270px;
 
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(auto-fill, minmax(--column-min-width, 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--column-min-width), 1fr)
+    );
   }
 
   .section {
@@ -520,10 +523,6 @@
   .mushroom-types {
     --card-title-font-size: var(--font-size-heading-xs);
     --card-title-color: var(--text-high-contrast);
-
-    @media (width > 760px) {
-      --equal-columns-wrap-template: repeat(4, 1fr);
-    }
   }
 }
 

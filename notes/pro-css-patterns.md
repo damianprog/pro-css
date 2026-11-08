@@ -421,3 +421,233 @@ W panelu Elements plakietka obok elementu włącza nakładkę z liniami siatki l
 9. Czym różni się `align-items` od `align-content`?
 10. Dlaczego `margin-top: auto` na stopce jest lepsze niż `grid-template-rows: auto auto 1fr auto` na karcie?
 11. `<strong>`, `<b>`, `<em>` i `<i>`: kiedy który?
+
+---
+
+## Zawijająca się siatka kart: `.equal-columns-wrap` z `auto-fill` + `minmax`
+
+**Data:** 2026-10-30 – 2026-11-08
+**Projekt:** FungiFinders (`mushroom-guide.html`, sekcja „Get to know your mushrooms”)
+**Status:** gotowe. Do zrobienia zostało potwierdzenie progów w DevTools.
+
+### Problem
+
+`.equal-columns` na desktopie ma `grid-auto-flow: column` i `grid-auto-columns: 1fr`, więc wszystkie dzieci lądują w jednym rzędzie. Przy 12 kartach grzybów to nie działa. Projekt (`design/`) pokazuje 4 karty w rzędzie przy 1440px i 1 kolumnę przy 425px. Tabletu w projekcie nie ma.
+
+### Co jest wspólne, a co się różni
+
+| | `.equal-columns` | `.equal-columns-wrap` |
+|---|---|---|
+| liczba dzieci | 2–3 | dowolna (12) |
+| kolumny | tyle, ile dzieci, zawsze w jednym rzędzie | tyle, ile się zmieści |
+| szerokość kolumn | równa | równa |
+| zawijanie | ❌ | ✅ |
+| media query | tak (`760px`) | nie |
+
+### Decyzje i dlaczego
+
+**1. Nie zmieniam bazy `.equal-columns`**
+Pozostałe użycia (2 i 3 dzieci) by się zepsuły. Przy `repeat(4, 1fr)` sekcja z 2 dziećmi zajęłaby pół szerokości.
+
+**2. Osobna klasa, a nie modyfikator `.equal-columns--...`**
+Najpierw myślałem o modyfikatorze. Ale `.equal-columns` znaczy „każde dziecko dostaje równą kolumnę w dostępnym miejscu”, a tutaj kolumn jest mniej niż dzieci. To inny układ, a nie wariant tego samego. Wspólne jest tylko to, że kolumny są równe, zarówno w jednym rzędzie, jak i w kilku.
+
+**3. Sztywne „4 kolumny” odrzucone**
+Pierwsza wersja: zmienna `--equal-columns-wrap-template` ustawiana w `.mushroom-types` na `repeat(4, 1fr)` w media query. Problemy:
+- między 425px a 1440px projekt nic nie mówi, a przeskok z 1 na 4 kolumny przy 760px dałby bardzo wąskie karty,
+- każda inna sekcja z innymi kartami musiałaby przepisywać wszystkie media queries.
+
+Wybrałem stopniowy wzrost liczby kolumn, kiedy jest miejsce.
+
+**4. Minimalna sensowna szerokość karty: 270px**
+270 nie wynika z tego, jak wygląda karta grzyba poniżej tej szerokości, tylko z tego, kiedy cały układ zaczyna wyglądać źle. Założenia: gap 16px i padding wrappera 2 × 16px na wszystkich szerokościach.
+
+Progi:
+```
+4 kolumny: 4 × 270 + 3 × 16 + 2 × 16 = 1160px
+3 kolumny: 3 × 270 + 2 × 16 + 2 × 16 = 874px
+```
+Poniżej progu karta musiałaby mieć mniej niż 270px, a minimum na to nie pozwala, więc liczba kolumn spada.
+
+**5. Media queries zastąpione przez `repeat(auto-fill, minmax(270px, 1fr))`**
+Progi same wynikają z minimum, więc nie trzeba ich wpisywać. Dzięki temu martwy blok `@media` z `--equal-columns-wrap-template` w `.mushroom-types` mogłem usunąć (zasada: zmienna to narzędzie na konkretny problem).
+
+**6. 270px jako wartość domyślna w klasie layoutu, nie w `.mushroom-types`**
+270 to ogólna minimalna szerokość karty w tym projekcie, a nie cecha grzybów. Sekcja z innymi kartami może nadpisać `--column-min-width` w swoim kontekście, bez zmian w klasie.
+
+**7. Pomyłki po drodze**
+- `minmax(--column-min-width, 1fr)`: zabrakło `var()`. Sama nazwa po prawej stronie dwukropka to dla przeglądarki zwykłe słowo, więc cała deklaracja jest nieprawidłowa (w DevTools przekreślona).
+- Domyślne `--column-min-width: 1fr`: `fr` to ułamek *wolnego* miejsca, więc nie da się z niego policzyć, ile kolumn się zmieści. Jako minimum w `minmax()` jest niedozwolone.
+
+**8. Dlaczego nigdy nie ma 5 kolumn**
+5 kolumn potrzebuje `5 × 270 + 4 × 16 = 1414px`, a `.wrapper` ma maksymalnie 1130px (nawet wariant 1330px nie wystarcza). Liczbę kolumn ogranicza więc nie tylko `minmax`, ale też **szerokość kontenera**.
+
+### Poznane techniki
+
+**`grid-auto-flow`**
+- `row` (domyślne): gdy skończą się kolumny, grid przechodzi do następnego rzędu.
+- `column`: gdy skończą się rzędy, grid przechodzi do następnej kolumny. Przy jednym rzędzie wszystko ląduje obok siebie, i dlatego `.equal-columns` nie zawija.
+
+**`auto-fill` ze stałą szerokością a z `minmax`**
+```css
+grid-template-columns: repeat(auto-fill, 270px);              /* kolumny przybywają, ale po prawej zostaje puste miejsce */
+grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); /* kolumny przybywają i rozciągają się na całą szerokość */
+```
+
+**Ustawienie a odczytanie zmiennej**
+```css
+--column-min-width: 270px;            /* ustawienie: nazwa przed dwukropkiem */
+minmax(var(--column-min-width), 1fr)  /* odczytanie: zawsze przez var() */
+```
+
+**`fr` nie może być minimum w `minmax()`**
+`fr` dzieli to, co *zostanie*. Minimum musi być konkretną długością (px, rem…).
+
+### Aktualny kod
+
+```css
+/* @layer layout */
+.equal-columns-wrap {
+  --column-min-width: 270px;
+
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--column-min-width), 1fr)
+  );
+}
+
+/* @layer pages */
+.mushroom-types {
+  --card-title-font-size: var(--font-size-heading-xs);
+  --card-title-color: var(--text-high-contrast);
+}
+```
+
+```html
+<div class="equal-columns-wrap">
+  <article class="card">…</article>
+  <!-- … -->
+</div>
+```
+
+### Otwarte punkty
+
+- [ ] Potwierdzić progi ~1160px i ~874px w DevTools (plakietka `grid`).
+- [ ] `gap: 1rem` jest wpisany na sztywno. Zmienna dopiero wtedy, gdy jakaś sekcja będzie potrzebowała innego.
+- [ ] Rozważyć `auto-fit` zamiast `auto-fill`: czym się różnią, kiedy kart jest mniej niż kolumn?
+- [ ] Przemianować eksporty w `design/` (`Guide - Desktop-1.png` to w rzeczywistości mobile).
+
+### Pytania kontrolne
+
+1. Dlaczego `.equal-columns` z `grid-auto-flow: column` nie zawija dzieci?
+2. Dlaczego zawijająca się siatka to osobna klasa, a nie modyfikator `.equal-columns`?
+3. Skąd wzięło się 270px i dlaczego nie mieszka w `.mushroom-types`?
+4. Policz próg dla 3 kolumn (gap 16px, padding wrappera 2 × 16px).
+5. Co jest źle w `minmax(--column-min-width, 1fr)`?
+6. Dlaczego `1fr` nie może być minimum w `minmax()`?
+7. Czym różni się `repeat(auto-fill, 270px)` od `repeat(auto-fill, minmax(270px, 1fr))`?
+8. Dlaczego na monitorze 1920px nadal są 4 kolumny, a nie 5?
+
+---
+
+## Kolory pilli, grubości fontu i błędy w Figmie
+
+**Data:** 2026-10-28 – 2026-10-29 (wpis dopisany 2026-11-08)
+**Projekt:** FungiFinders (`mushroom-guide.html`, karty grzybów)
+**Status:** modyfikatory gotowe, `.pill--fall` jeszcze nieużyte w HTML
+
+### Problem
+
+Pille w kartach mają różne kolory zależnie od treści: edible i summer są zielone, toxic czerwona, spring turkusowa, fall pomarańczowa. Do tego „Important notes:” w stopce karty jest pogrubione, a strona ładuje Fira Sans tylko w grubościach 400 i 500.
+
+### Decyzje i dlaczego
+
+**1. Nazwa modyfikatora według treści: `.pill--spring`, a nie `.pill--blue`**
+`.pill--blue` kłamie po zmianie koloru i trzeba by go podmieniać w każdej pilli „spring”. Przy `.pill--spring` edytuję jedną regułę.
+
+**2. Pozorna sprzeczność: `.pill--spring` jest OK, a `card--mushroom` nie**
+Nazwa według treści jest w porządku tylko wtedy, gdy **wygląd ma sygnalizować tę treść**. Kolor pilli ma pokazywać porę roku. Projekt nie wskazuje natomiast, żeby wygląd karty sygnalizował „teraz opisujemy grzyba”. Karta to uniwersalne pudełko.
+
+**3. Osobne modyfikatory nawet dla pilli, które dziś mają kolor bazowy**
+`.pill--edible` i `.pill--summer` mają dziś ten sam kolor co `.pill`. Mają jednak własne klasy, bo kiedyś mogą dostać różne kolory, i wtedy nie trzeba będzie zmieniać HTML-a.
+
+**4. Bezpośrednie nadpisanie `background-color`, bez zmiennej `--pill-background`**
+Rozważałem `background-color: var(--pill-background, var(--background-accent-main))` w `.pill`. Odrzuciłem to, bo zmienna dotyczyłaby jednej właściwości, więc w modyfikatorze to i tak jedna linia. Zmienna „na zapas” wprowadzałaby w błąd, bo sugeruje problem, którego nie ma.
+
+> Zasada: zmienna to narzędzie na konkretny problem, a nie domyślny sposób pisania CSS.
+
+**5. Edible i summer na tokenie akcentu, z komentarzem**
+Edible i summer używają `--background-accent-main`, bo w projekcie mają kolor akcentu. Ryzyko: zmiana akcentu zmieni też te pille i mogą wtedy np. zlać się z inną porą roku. Komentarz w kodzie mówi **dlaczego** i **na co uważać**, a nie **co** robi kod.
+
+**6. Pogrubienie w Fira Sans domyślnie przez 500**
+`strong` w `@layer base` dostaje `--font-weight-md` (500). Fira Sans 700 usunąłem z linku do Google Fonts, bo nic jej nie używało.
+
+**7. Błędy w Figmie implementuję w wersji spójnej**
+- „fall” w karcie Matsutake ma kolor „toxic”,
+- w karcie King Bolete pogrubiona jest cała notatka, a nie tylko „Important notes:”.
+
+Implementuję wersję spójną (fall pomarańczowa, pogrubiony tylko nagłówek notatki) i potwierdzam to z projektantem.
+
+### Poznane techniki
+
+**Algorytm dopasowania grubości fontu**
+Gdy żądanej grubości nie ma:
+- prośba o 400 lub 500, której brakuje: przeglądarka sprawdza najpierw drugą z tych wartości, potem lżejsze, potem cięższe (brak 500 → 400),
+- prośba o więcej niż 500: najpierw cięższe, potem lżejsze (brak 700 → szuka w górę, potem w dół).
+
+Jeśli prosimy o pogrubienie (600 lub więcej), a dopasowana grubość jest dużo lżejsza (np. 400), przeglądarka może zrobić **faux bold**, czyli sztucznie pogrubić glify. Wygląda to gorzej niż prawdziwa grubość.
+
+**Tokeny surowe i znaczeniowe dla grubości**
+```css
+--fw-400: 400; --fw-500: 500; --fw-700: 700;  /* ile */
+--font-weight-regular: var(--fw-400);         /* do czego */
+--font-weight-md: var(--fw-500);
+--font-weight-lg: var(--fw-700);
+```
+
+**Font zmienny**
+Outfit ładuję jako zakres `wght@100..900`: jeden plik obsługuje każdą grubość. Dla Fira Sans wypisuję konkretne grubości (`wght@400;500`).
+
+### Aktualny kod
+
+```css
+/* @layer base */
+strong {
+  font-weight: var(--font-weight-md);
+}
+
+/* @layer components */
+/* background-color of pills edible and summer
+should be coherent with background-accent-main
+to represent accent.
+Remember that changing accent might make these pills confusing.
+*/
+.pill--edible { background-color: var(--background-accent-main); }
+.pill--summer { background-color: var(--background-accent-main); }
+.pill--toxic  { background-color: var(--clr-red-500); }
+.pill--spring { background-color: var(--clr-teal-500); }
+.pill--fall   { background-color: var(--clr-orange-500); }
+```
+
+### Otwarte punkty
+
+- [ ] Dokończyć 12 kart z projektu i użyć `.pill--fall` w HTML.
+- [ ] Potwierdzić z projektantem oba błędy w Figmie.
+- [ ] Znane ograniczenie (nie naprawiać): `strong` ma stałe 500, więc wewnątrz nagłówka (Outfit, 700) byłby *cieńszy* od otoczenia. W projekcie nie ma takiego przypadku.
+- [ ] `align-items: start` na `.pills`: usunąć czy zostawić z komentarzem?
+- [ ] Kontrast białego tekstu na `--clr-green-400` (WCAG AA 4.5:1).
+- [ ] `cursor: pointer` na `.pill--select`?
+- [ ] Deklaracja kolejności warstw na górze `style.css`.
+- [ ] Ścieżki obrazków w HTML od korzenia (`/assets/...`) → względne.
+
+### Pytania kontrolne
+
+1. Dlaczego `.pill--spring` jest OK, skoro `card--mushroom` nie jest?
+2. Po co `.pill--edible`, skoro ma ten sam kolor co `.pill`?
+3. Dlaczego nie wprowadziłem `--pill-background`?
+4. Co powinien mówić dobry komentarz w kodzie?
+5. Strona ładuje Fira Sans 400 i 500. Którą grubość zobaczysz przy `font-weight: 700`, a którą przy `600`?
+6. Co to jest faux bold i kiedy się pojawia?
+7. Co robisz, gdy projekt w Figmie jest niespójny?
