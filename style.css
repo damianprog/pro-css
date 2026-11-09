@@ -1,3 +1,5 @@
+/* Breakpoint 760px. Desktop starts from width > 760px and mobile is width <= 760px */
+
 @layer reset {
   *,
   *::before,
@@ -339,7 +341,7 @@
       text-decoration: none;
     }
 
-    @media (width < 760px) {
+    @media (width <= 760px) {
       display: none;
       position: absolute;
       z-index: 10;
@@ -366,7 +368,7 @@
     }
   }
 
-  @media (width < 760px) {
+  @media (width <= 760px) {
     [aria-controls='primary-nav'] {
       display: block;
     }
