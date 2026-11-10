@@ -651,3 +651,142 @@ Remember that changing accent might make these pills confusing.
 5. Strona ładuje Fira Sans 400 i 500. Którą grubość zobaczysz przy `font-weight: 700`, a którą przy `600`?
 6. Co to jest faux bold i kiedy się pojawia?
 7. Co robisz, gdy projekt w Figmie jest niespójny?
+
+---
+
+## Sekcja FAQ: Bento grid, obrazki wypełniające obszar oraz `align-items` a `align-content`
+
+**Data:** 2026-11-08 – 2026-11-10
+**Projekt:** FungiFinders (`mushroom-guide.html`, sekcja „Frequently Asked Questions”)
+**Status:** gotowe (commit `4e4078b`)
+
+### Problem
+
+FAQ to 4 karty w układzie Bento: na desktopie 3 kolumny, karta 3 zajmuje dwa rzędy, a karta 4 dwie kolumny. Każda karta ma obrazek, ale w każdej stoi on inaczej:
+- karta 2: obrazek **pod** tekstem,
+- karta 3: obrazek ma wypełnić całą wolną wysokość karty, która jest wysoka na dwa rzędy,
+- karta 4: obrazek **obok** tytułu i tekstu, na całą wysokość karty.
+
+### Decyzje i dlaczego
+
+**1. Spany tylko w układzie 3-kolumnowym (mobile-first)**
+Na mobile karty stoją jedna pod drugą, więc `span` nie ma sensu. Wszystkie spany i wyjątki są w `@media (width > 760px)`.
+
+**2. Komentarz: siatka jest zaprojektowana na dokładnie 4 karty**
+Spany zależą od *pozycji* (`:nth-child`), a nie od treści. Przy innej liczbie kart siatka zostawi dziury albo dodatkowe rzędy. Komentarz mówi o tym ograniczeniu, a nie opisuje, co robi kod.
+
+**3. Karta 2: `order: 1` na obrazku**
+`.card` to flex w kolumnie, więc `order` przesuwa obrazek na koniec bez zmiany HTML-a. W HTML-u obrazek zostaje na początku, tak jak w pozostałych kartach. Kolejność czytania przez czytnik ekranu się nie zmienia, a obrazek nie jest treścią, którą trzeba czytać w określonej kolejności.
+
+**4. Karta 3: `flex-grow: 1` + `object-fit: cover`**
+Karta ma `grid-row: span 2`, więc jest wyższa niż jej treść. W karcie (flex w kolumnie) zostaje wolne miejsce na osi głównej.
+- `margin-top: auto` zjada wolne miejsce *obok* elementu i go **przesuwa**.
+- `flex-grow: 1` oddaje to miejsce *samemu elementowi*, który **rośnie**. Tego właśnie potrzebuję.
+
+Obrazek urósł w pionie, ale ma tę samą szerokość, więc bez `object-fit` byłby zniekształcony.
+
+**5. Karta 4: wewnętrzny grid `1fr 2fr` i `align-self: stretch` na obrazku**
+Obrazek ma `grid-row: 1/3` (oba wiersze), a `h3` i `p` mają po jednym wierszu w drugiej kolumnie.
+
+Przewidywanie było takie: obrazek wyższy niż tekst → dodatkowa wysokość dzieli się po równo między wiersze `auto` → tytuł odjeżdża od tekstu. DevTools pokazało coś innego: obrazek był **niższy** niż tekst i wisiał u góry z pustym miejscem pod spodem. **Najpierw liczby z DevTools, potem wnioski.**
+
+Mimo to obrazek się nie rozciągał, chociaż `h3` i `p` się rozciągają. Przyczyna jest w technice nr 2 poniżej (`normal` ≠ `stretch`).
+
+**6. Reguły obrazków tylko w blokach kart 3 i 4, a nie w `.card img`**
+Tylko te dwie karty mają obrazek w obszarze, którego wysokość wyznacza coś innego. W kartach 1–2 i na `index.html` obrazki zachowują naturalne proporcje i nie ma czego wypełniać. Reguła należy do jedynego miejsca, które jej potrzebuje.
+
+**7. Kadr bez `object-position`**
+Po `cover` grzyb jest dobrze widoczny na każdej szerokości, więc domyślny środek wystarcza.
+
+### Poznane techniki
+
+**1. `align-content` a `align-items`: dwie warstwy, każda z własnym wolnym miejscem**
+| | Działa na | Pytanie | Nic nie robi, gdy… |
+|---|---|---|---|
+| `align-content` | **wiersze** (tory) | jak wiersze dzielą miejsce w kontenerze? | nie ma wolnego miejsca w **kontenerze** (np. `height: auto`) |
+| `align-items` | **elementy** | gdzie element stoi w swoim wierszu? | nie ma wolnego miejsca w **wierszu** (element jest najwyższy w wierszu) |
+
+Kolejność: najpierw wiersze dostają wysokość (z treści i z `align-content: stretch`), potem `align-items` ustawia w nich elementy. Przy `stretch` element rozciąga się do **wysokości swojego wiersza**, a nie do najwyższego sąsiada czy kontenera.
+
+Przykład z kart grzybów: `align-items: start` naprawiło pille, ale odstępy dalej rosły, bo wiersze nadal zabierały wolne miejsce karty. To była robota dla `align-content: start`.
+
+Element rozpięty na kilka wierszy (`grid-row: 1/3`), który jest wyższy niż ich suma, **żąda** dodatkowej wysokości. Grid dzieli ją po równo między wiersze `auto`, przez które ten element przechodzi. To nie jest wolne miejsce w kontenerze, więc `align-content` tu nie pomoże. Pomogłoby wskazanie wiersza, który ma przejąć nadmiar, np. `grid-template-rows: auto 1fr`.
+
+Demo: https://claude.ai/artifact/GJV43aiJVxRR37BPMgyKc3
+
+**2. Domyślne `align-items` to `normal`, a nie `stretch`**
+W gridzie `normal` działa jak:
+- `stretch` dla zwykłych elementów (`h3`, `p`, `div`),
+- `start` dla elementów z **własnymi proporcjami** (`img`, `video`, cokolwiek z `aspect-ratio`), bo rozciąganie by je zniekształciło.
+
+Rozciągnięcie obrazka to świadoma decyzja: `align-self: stretch` (albo `height: 100%`).
+
+**3. `object-fit`**
+- `cover`: wypełnia cały prostokąt, zachowuje proporcje i przycina nadmiar.
+- `contain`: mieści całe zdjęcie i zostawia puste paski.
+- `object-position`: wybiera, która część zdjęcia zostaje po przycięciu (domyślnie środek). Składnia jak w `background-position`.
+
+**4. Element z `position: absolute` nie wpływa na rozmiar wiersza ani na `gap`**
+Błąd w demo: etykieta „wiersz 2” była wyższa niż pudełko z pillami, więc to ona wyznaczała wysokość wiersza i `stretch` miał co wypełniać. Po `position: absolute` etykieta wypadła z przepływu. To ten sam mechanizm co przy `.visually-hidden` we flexie.
+
+**5. `> :nth-child(2) > img` a zagnieżdżone `img`**
+`> img` łapie tylko bezpośrednie dziecko, a samo `img` łapie każdy obrazek w środku. Wszystkie trzy karty zapisane są teraz tak samo (zagnieżdżone `img`).
+
+### Aktualny kod
+
+```css
+/* @layer pages */
+.faq-cards {
+  /* … */
+  @media (width > 760px) {
+    grid-template-columns: repeat(3, 1fr);
+
+    > :nth-child(2) {
+      img { order: 1; }
+    }
+
+    > :nth-child(3) {
+      grid-row: span 2;
+
+      img {
+        flex-grow: 1;
+        object-fit: cover;
+      }
+    }
+
+    > :nth-child(4) {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      grid-template-rows: repeat(2, auto);
+
+      img {
+        grid-row: 1/3;
+        grid-column: 1/2;
+        align-self: stretch;
+        object-fit: cover;
+      }
+      h3 { grid-row: 1/2; grid-column: 2/3; }
+      p  { grid-row: 2/3; grid-column: 2/3; }
+    }
+  }
+}
+```
+
+### Otwarte punkty
+
+- [ ] `align-items: start` na `.pills`: w kartach grzybów `.card` jest teraz flexem w kolumnie. Czy w wierszu pilli jest jeszcze wolne miejsce do wypełniania? Jeśli nie, reguła nic nie robi.
+- [ ] Mobile: porównać sekcję FAQ z projektem (`Guide - Desktop-1.png` to mobile).
+- [ ] Karta 3 przy ~761px: czy wąska, wysoka karta nie przycina zdjęcia za mocno?
+
+### Pytania kontrolne
+
+1. `align-content` czy `align-items`: która właściwość działa na wiersze, a która na elementy?
+2. Kiedy `align-content` nic nie robi? A kiedy `align-items`?
+3. Przy `align-items: stretch`: do jakiej wysokości rozciąga się element?
+4. Dlaczego w karcie grzyba `align-items: start` nie usunęło rosnących odstępów?
+5. Obrazek zajmuje dwa wiersze `auto` i jest o 150px wyższy niż ich treść. Gdzie trafiają te piksele i dlaczego `align-content: start` tego nie zmieni?
+6. Dlaczego `img` w gridzie nie rozciąga się domyślnie, skoro `h3` się rozciąga?
+7. `margin-top: auto` czy `flex-grow: 1`: które przesuwa, a które powiększa?
+8. `object-fit: cover` a `contain`?
+9. Dlaczego reguły obrazków są w blokach kart 3 i 4, a nie w `.card img`?
