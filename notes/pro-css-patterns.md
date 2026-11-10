@@ -658,7 +658,7 @@ Remember that changing accent might make these pills confusing.
 
 **Data:** 2026-11-08 – 2026-11-10
 **Projekt:** FungiFinders (`mushroom-guide.html`, sekcja „Frequently Asked Questions”)
-**Status:** gotowe (commit `4e4078b`)
+**Status:** gotowe (commit `54fdadd`)
 
 ### Problem
 
