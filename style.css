@@ -533,7 +533,7 @@
    the grid leaves gaps or extra rows. */
 
   .faq-cards {
-    --card-title-font-size: var(--font-size-heading-xs);
+    --card-title-font-size: var(--font-size-heading-sm);
     --card-title-color: var(--text-high-contrast);
 
     display: grid;
