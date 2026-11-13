@@ -546,10 +546,16 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    /**/
+
     > :first-child {
       .card__img-frame {
         aspect-ratio: 3/2;
+
+        img {
+          object-position: 0% 50%;
+          scale: 1.21;
+          transform-origin: 0% 50%;
+        }
       }
     }
 
@@ -560,6 +566,16 @@
     @media (width > 760px) {
       grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
+
+      > :first-child {
+        .card__img-frame {
+          aspect-ratio: 395 / 240;
+
+          img {
+            scale: 1.11;
+          }
+        }
+      }
 
       > :nth-child(2) {
         .card__img-frame {

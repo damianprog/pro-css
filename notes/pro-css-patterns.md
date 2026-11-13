@@ -790,3 +790,174 @@ Błąd w demo: etykieta „wiersz 2” była wyższa niż pudełko z pillami, wi
 7. `margin-top: auto` czy `flex-grow: 1`: które przesuwa, a które powiększa?
 8. `object-fit: cover` a `contain`?
 9. Dlaczego reguły obrazków są w blokach kart 3 i 4, a nie w `.card img`?
+
+---
+
+## FAQ zgodnie z Figmą: ramka na obrazek, `aspect-ratio` i zoom ponad `cover`
+
+**Data:** 2026-11-11 – 2026-11-13
+**Projekt:** FungiFinders (`mushroom-guide.html`, sekcja „Frequently Asked Questions”)
+**Status:** ramki gotowe (commit `3a72eca`), zoom karty 1 gotowy, ale jeszcze niezacommitowany. Karty 3 i 4 czekają.
+
+### Problem
+
+Porównanie FAQ z Figmą wykazało trzy różnice:
+- tytuły kart są większe (`--fs-700`, a nie `--fs-600`),
+- odstęp między kartami jest inny na mobile i na desktopie,
+- zdjęcia w kartach 1, 3 i 4 są w Figmie **powiększone ponad `cover`** i przesunięte. Kadr pokazuje mniejszy fragment zdjęcia niż samo `object-fit: cover`.
+
+Dane karty 1 z Figmy:
+| | kadr (ramka) | warstwa zdjęcia | pozycja |
+|---|---|---|---|
+| mobile | 361 × 240 (3:2) | 437 × 328 (4:3) | X = 0% (76px nadmiaru w prawo), Y = 50% (po 44px góra i dół) |
+| desktop | 395 × 240 (~1.64) | 437 szer. | X = 0% |
+
+### Decyzje i dlaczego
+
+**1. Tytuł FAQ: `--font-size-heading-sm` zamiast `-xs`**
+Zgodność z Figmą: tytuł ma `--fs-700`. Zmieniłem tylko wartość custom property na `.faq-cards`. Komponent `.card` pozostał bez zmian.
+
+**2. `gap`: 1.5rem na mobile, 1rem na desktopie**
+Figma na desktopie jest niespójna (14, 17 i 24px). Uznałem to za błąd projektu i wybrałem 1rem. Na mobile Figma jest spójna i ma 24px. Baza to mobile, a desktop nadpisuje wartość w `@media (width > 760px)`.
+
+**3. Kolejność kart na mobile: 1, 2, 4, 3**
+`> :nth-child(3) { order: 1 }` w bazie, a w `@media` z powrotem `order: 0`. Zmienia się tylko kolejność wizualna, HTML zostaje taki sam.
+
+**4. Ramka `.card__img-frame` wokół każdego `img`**
+Powiększone zdjęcie wystaje poza swój prostokąt, więc musi go przyciąć coś *na zewnątrz*: rodzic z `overflow: hidden`. Ramka przejęła też `border-radius`, bo przy powiększonym zdjęciu zaokrąglenie musi być na tym, co przycina.
+
+Karta 2 w Figmie nie ma zoomu, ale też dostała ramkę. Każda karta ma wtedy tę samą strukturę HTML, a reguły kart nie muszą sprawdzać, czy ramka istnieje.
+
+**5. Podział reguł: ogólnie w komponencie, wyjątki w sekcji**
+- `@layer components`, `.card__img-frame`: `overflow: hidden`, `border-radius` oraz `img { width: 100%; height: 100%; object-fit: cover }`. Obowiązuje każdą ramkę.
+- `@layer pages`, `.faq-cards`: `aspect-ratio`, zoom i układ kart 2/3/4.
+
+**6. Reguły układu przeniesione z `img` na ramkę**
+`order` (karta 2), `flex-grow` (karta 3) oraz `grid-row/column` + `align-self` (karta 4) działają na **dziecko** kontenera flex/grid. Dzieckiem karty jest teraz ramka, a nie `img`. `img` wypełnia ramkę przez `width/height: 100%`.
+
+Pytanie, które się po drodze pojawiło: dlaczego `align-self: stretch` nie rozciągał ramki w pionie w karcie 2? `.card` to flex **w kolumnie**, więc `align-self` działa na osi poprzecznej, czyli w **poziomie**. Wzrost w pionie (oś główna) daje `flex-grow: 1`.
+
+**7. Zoom: mobile w bazie, desktop nadpisuje tylko różnice**
+Rozważałem dwie drogi: (A) baza = mobile, a `@media (width > 760px)` nadpisuje; (B) osobne `@media` dla mobile i desktopu. Wybrałem A, bo cała `.faq-cards` jest już zbudowana mobile-first.
+
+Na desktopie zdjęcie też jest przyklejone do lewej, więc `object-position` i `transform-origin` przechodzą z bazy. Nadpisuję tylko `aspect-ratio` i `scale`.
+
+To zastępuje decyzję nr 7 z poprzedniego wpisu („kadr bez `object-position`”). Wtedy nie porównywałem kadru z Figmą.
+
+**8. `aspect-ratio: 395 / 240` zamiast `1.64`**
+Wymiary z Figmy w ułamku pokazują, skąd wzięła się liczba. `1.64` byłoby magiczną liczbą.
+
+Na początku martwiłem się, że szerokość ramki zależy od szerokości karty, więc nie znam rozmiarów. To nie ma znaczenia: `aspect-ratio` to proporcja, a `scale` to mnożnik. Przy każdej szerokości karty ramka ma te same proporcje, więc `cover` + `scale` tną zdjęcie tak samo.
+
+### Poznane techniki
+
+**1. `cover` = najmniejsze powiększenie bez pustych miejsc**
+`cover` sprawdza dwa sposoby dopasowania i wybiera ten, który zakrywa całą ramkę:
+- ramka **szersza** proporcjonalnie niż zdjęcie → dopasowuje **szerokość**, a zdjęcie wystaje w pionie,
+- ramka **węższa** proporcjonalnie → dopasowuje **wysokość**, a zdjęcie wystaje na boki.
+
+Przykład: ramka 395 × 240, zdjęcie 4:3. Po szerokości wychodzi 395 × 296 i ramka jest zakryta ✅. Po wysokości wychodzi 321 × 240 i z prawej zostaje dziura ❌.
+
+**2. Zoom ponad `cover`: `scale` = warstwa / kadr na osi, którą dopasowuje `cover`**
+U nas ramka (1.5 i ~1.64) jest szersza niż zdjęcie (1.33), więc `cover` dopasowuje szerokość. Szerokość zdjęcia po `cover` = szerokość ramki:
+- mobile: 437 / 361 ≈ **1.21**
+- desktop: 437 / 395 ≈ **1.11** (najpierw zaokrągliłem do 1.10, a to za mało dokładnie)
+
+Przy ramce węższej niż zdjęcie trzeba by dzielić **wysokości**.
+
+**3. `transform-origin` = te same procenty co `object-position`**
+`scale` powiększa wokół punktu, który stoi w miejscu. Domyślnie jest to środek (`50% 50%`). Przy domyślnym punkcie zdjęcie urosłoby we wszystkie strony, a lewa krawędź, przypięta przez `object-position: 0% 50%`, wyjechałaby poza ramkę.
+
+`transform-origin: 0% 50%` zostawia w miejscu punkt na lewej krawędzi, w połowie wysokości. Cały nadmiar w poziomie idzie w prawo, a w pionie dzieli się po równo. Przykład: zdjęcie przyklejone do prawej i do góry → `100% 0%` w **obu** właściwościach.
+
+Demo: https://claude.ai/artifact/VXQqefLc9ikUhJMZpkjQh6
+
+### Aktualny kod
+
+```css
+/* @layer components */
+.card__img-frame {
+  overflow: hidden;
+  border-radius: var(--border-radius-2);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* @layer pages */
+.faq-cards {
+  --card-title-font-size: var(--font-size-heading-sm);
+  --card-title-color: var(--text-high-contrast);
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  > :first-child {
+    .card__img-frame {
+      aspect-ratio: 3/2;
+
+      img {
+        object-position: 0% 50%;
+        scale: 1.21;
+        transform-origin: 0% 50%;
+      }
+    }
+  }
+
+  > :nth-child(3) { order: 1; }
+
+  @media (width > 760px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+
+    > :first-child {
+      .card__img-frame {
+        aspect-ratio: 395 / 240;
+        img { scale: 1.11; }
+      }
+    }
+
+    > :nth-child(2) {
+      .card__img-frame { order: 1; flex-grow: 1; }
+    }
+
+    > :nth-child(3) {
+      order: 0;
+      grid-row: span 2;
+      .card__img-frame { flex-grow: 1; }
+    }
+
+    > :nth-child(4) {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      grid-template-rows: repeat(2, auto);
+
+      .card__img-frame { grid-row: 1/3; grid-column: 1/2; align-self: stretch; }
+      h3 { grid-row: 1/2; grid-column: 2/3; }
+      p  { grid-row: 2/3; grid-column: 2/3; }
+    }
+  }
+}
+```
+
+### Otwarte punkty
+
+- [ ] Zoom i kadr kart 3 i 4 według Figmy (karta 2 nie ma zoomu).
+- [ ] Punkty z poprzedniego wpisu: `align-items: start` na `.pills` oraz karta 3 przy ~761px.
+
+### Pytania kontrolne
+
+1. Po co ramka z `overflow: hidden`, skoro `img` ma już `object-fit: cover`?
+2. Dlaczego `border-radius` jest na ramce, a nie na `img`?
+3. Dlaczego `order`/`flex-grow` przeszły z `img` na ramkę?
+4. Karta jest flexem w kolumnie. Dlaczego `align-self: stretch` nie rozciąga ramki w pionie?
+5. Ramka 200 × 400, zdjęcie 4:3. Co dopasuje `cover`, szerokość czy wysokość?
+6. Jak policzyć `scale` ponad `cover` z wymiarów kadru i warstwy w Figmie?
+7. Co się stanie z lewą krawędzią zdjęcia przy `object-position: 0% 50%` i `scale: 1.2`, ale bez `transform-origin`?
+8. Zdjęcie przyklejone do prawej i do góry: jakie wartości w `object-position` i `transform-origin`?
+9. Dlaczego szerokość karty nie wpływa na kadr, skoro ramka ma zmienną szerokość?
