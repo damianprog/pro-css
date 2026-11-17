@@ -561,10 +561,21 @@
 
     > :nth-child(3) {
       order: 1;
+
+      .card__img-frame {
+        aspect-ratio: 361 / 268;
+
+        img {
+          object-position: 22% 100%;
+          transform-origin: 22% 100%;
+          scale: 1.06;
+        }
+      }
     }
 
     @media (width > 760px) {
       grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, auto);
       gap: 1rem;
 
       > :first-child {
@@ -587,9 +598,22 @@
       > :nth-child(3) {
         order: 0;
         grid-row: span 2;
+        display: grid;
+        grid-template-rows: subgrid;
 
         .card__img-frame {
-          flex-grow: 1;
+          aspect-ratio: auto;
+          margin-bottom: -1rem;
+
+          img {
+            scale: 1.03;
+            object-position: 50% 100%;
+            transform-origin: 50% 100%;
+          }
+        }
+
+        .faq-cards__description {
+          margin-top: 1rem;
         }
       }
 

@@ -947,7 +947,8 @@ Demo: https://claude.ai/artifact/VXQqefLc9ikUhJMZpkjQh6
 
 ### Otwarte punkty
 
-- [ ] Zoom i kadr kart 3 i 4 według Figmy (karta 2 nie ma zoomu).
+- [x] Zoom i kadr karty 3 (zob. wpis „FAQ karta 3: subgrid…”).
+- [ ] Zoom i kadr karty 4 według Figmy (karta 2 nie ma zoomu).
 - [ ] Punkty z poprzedniego wpisu: `align-items: start` na `.pills` oraz karta 3 przy ~761px.
 
 ### Pytania kontrolne
@@ -961,3 +962,121 @@ Demo: https://claude.ai/artifact/VXQqefLc9ikUhJMZpkjQh6
 7. Co się stanie z lewą krawędzią zdjęcia przy `object-position: 0% 50%` i `scale: 1.2`, ale bez `transform-origin`?
 8. Zdjęcie przyklejone do prawej i do góry: jakie wartości w `object-position` i `transform-origin`?
 9. Dlaczego szerokość karty nie wpływa na kadr, skoro ramka ma zmienną szerokość?
+
+---
+
+## FAQ karta 3: subgrid zamiast `flex-grow` i zoom na mobile
+
+**Data:** 2026-11-13 – 2026-11-17
+**Projekt:** FungiFinders (`mushroom-guide.html`, sekcja „Frequently Asked Questions”)
+**Status:** karta 3 zgodna z Figmą na mobile i desktopie. Karta 4 czeka.
+
+### Problem
+
+Na desktopie karta 3 zajmuje dwa wiersze. W Figmie dół jej ramki leży dokładnie na wysokości górnej krawędzi karty 4. Z `flex-grow: 1` ramka zajmowała całe wolne miejsce w karcie, więc jej dół zależał od długości tekstu, a nie od karty 4.
+
+Do tego zoom ponad `cover`:
+| | kadr | `scale` | punkt |
+|---|---|---|---|
+| mobile | 361 × 268 | 1.06 | 22% 100% |
+| desktop | zmienny (subgrid) | 1.03 | 50% 100% |
+
+### Decyzje i dlaczego
+
+**1. Subgrid: wiersze karty 3 = wiersze `.faq-cards`**
+`.faq-cards` na desktopie ma `grid-template-rows: repeat(2, auto)`, a karta 3 ma `display: grid; grid-template-rows: subgrid`. Wysokość wiersza 1 wyznaczają karty 1 i 2, a subgrid przekazuje ją ramce karty 3. Dół ramki jest więc związany z układem sekcji, a nie z treścią karty.
+
+**2. Wrapper `faq-cards__description` na `h3` + `p`**
+Karta 3 miała troje dzieci (ramka, `h3`, `p`), a subgrid daje dwa wiersze. Subgrid nie dokłada nowych wierszy, więc `h3` i `p` wylądowałyby w jednym wierszu, nałożone na siebie. Wrapper robi z nich jedno dziecko.
+Odrzuciłem 4 wiersze w `.faq-cards`, bo siatka sekcji zależałaby wtedy od wnętrza jednej karty.
+
+**3. `margin-bottom: -1rem` na ramce, `margin-top: 1rem` na opisie**
+Koniec wiersza 1 to jeszcze nie góra karty 4, bo między nimi jest gap 1rem. Przy `stretch` ujemny margines wydłuża element, więc ramka przechodzi przez gap. Odstęp ramka–opis jest relacją tych dwóch elementów, więc siedzi na opisie, a nie na `.card__title`.
+
+**4. Mobile w bazie, desktop nadpisuje `aspect-ratio` i `object-position`**
+Ten sam wzorzec co w karcie 1. Wszystkie reguły z bazy przechodzą na desktop, więc sprawdziłem każdą:
+- `scale`, `transform-origin`: desktop już je nadpisuje,
+- `aspect-ratio`: trzeba `auto`, bo inaczej ramka przestaje się rozciągać (technika 1),
+- `object-position`: trzeba `50% 100%`, bo inaczej zdjęcie zostaje przesunięte o 22% i nie pasuje do `transform-origin`.
+
+### Poznane techniki
+
+**1. `aspect-ratio` wyłącza rozciąganie w gridzie**
+`align-self: normal` działa jak `stretch` tylko dla elementów bez proporcji. Element z `aspect-ratio` (albo `img`) zachowuje się jak `start` i bierze wysokość z szerokości. Dlatego na desktopie `aspect-ratio: auto` przywraca rozciąganie ramki.
+
+**2. Subgrid nie tworzy niejawnych wierszy**
+Dzieci, dla których brakuje torów, trafiają do istniejących torów i się nakładają. Liczba dzieci musi pasować do liczby wierszy przekazanych przez rodzica.
+
+**3. Ujemny margines przy `stretch` wydłuża element**
+Rozciągnięty element wypełnia obszar minus marginesy. Ujemny margines powiększa ten obszar poza komórkę.
+
+### Aktualny kod
+
+```css
+/* @layer pages, .faq-cards */
+> :nth-child(3) {
+  order: 1;
+
+  .card__img-frame {
+    aspect-ratio: 361 / 268;
+
+    img {
+      object-position: 22% 100%;
+      transform-origin: 22% 100%;
+      scale: 1.06;
+    }
+  }
+}
+
+@media (width > 760px) {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 1rem;
+
+  > :nth-child(3) {
+    order: 0;
+    grid-row: span 2;
+    display: grid;
+    grid-template-rows: subgrid;
+
+    .card__img-frame {
+      aspect-ratio: auto;
+      margin-bottom: -1rem;
+
+      img {
+        scale: 1.03;
+        object-position: 50% 100%;
+        transform-origin: 50% 100%;
+      }
+    }
+
+    .faq-cards__description {
+      margin-top: 1rem;
+    }
+  }
+}
+```
+
+```html
+<article class="card">
+  <div class="card__img-frame"><img … /></div>
+  <div class="faq-cards__description grid-flow">
+    <h3 class="card__title">What are the best seasons for mushroom foraging?</h3>
+    <p>…</p>
+  </div>
+</article>
+```
+
+### Otwarte punkty
+
+- [ ] Zoom i kadr karty 4.
+- [ ] Wiersz 2 rośnie z tekstem karty 3: co wtedy z kartą 4?
+
+### Pytania kontrolne
+
+1. Dlaczego `flex-grow` nie wyrównywał dołu ramki z górą karty 4?
+2. Skąd ramka karty 3 bierze wysokość na desktopie?
+3. Co się stanie z `h3` i `p` w subgridzie z dwoma wierszami bez wrappera?
+4. Dlaczego ujemny `margin-bottom` wydłuża ramkę, zamiast ją przesuwać?
+5. Dlaczego `aspect-ratio: 361/268` z mobile zepsułoby subgrid na desktopie?
+6. Które reguły z bazy trzeba było nadpisać na desktopie, a które nadpisywał już desktop?
