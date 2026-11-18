@@ -586,6 +586,11 @@
     }
 
     @media (width > 760px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    @media (width > 1100px) {
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(2, auto);
       gap: 1rem;

@@ -1069,8 +1069,8 @@ Rozciągnięty element wypełnia obszar minus marginesy. Ujemny margines powięk
 
 ### Otwarte punkty
 
-- [ ] Zoom i kadr karty 4.
-- [ ] Wiersz 2 rośnie z tekstem karty 3: co wtedy z kartą 4?
+- [x] Zoom i kadr karty 4 (zob. wpis „FAQ karta 4…”).
+- [x] Wiersz 2 rośnie z tekstem karty 3: co wtedy z kartą 4? Rozwiązane układem pośrednim (zob. wpis „FAQ karta 4…”). Układ trzykolumnowy jest teraz w `@media (width > 1100px)`, a nie `> 760px`.
 
 ### Pytania kontrolne
 
@@ -1080,3 +1080,134 @@ Rozciągnięty element wypełnia obszar minus marginesy. Ujemny margines powięk
 4. Dlaczego ujemny `margin-bottom` wydłuża ramkę, zamiast ją przesuwać?
 5. Dlaczego `aspect-ratio: 361/268` z mobile zepsułoby subgrid na desktopie?
 6. Które reguły z bazy trzeba było nadpisać na desktopie, a które nadpisywał już desktop?
+
+---
+
+## FAQ karta 4: zoom na dwóch osiach i układ pośredni 761–1100px
+
+**Data:** 2026-11-17 – 2026-11-18
+**Projekt:** FungiFinders (`mushroom-guide.html`, sekcja „Frequently Asked Questions”)
+**Status:** karta 4 zgodna z Figmą. Układ pośredni gotowy. Sekcja FAQ zamknięta.
+
+### Problem
+
+1. Zoom karty 4 według Figmy. Plik `where-to-find.webp` ma 1920 × 1334 (~1.44), **nie** 3:2 jak karta 3.
+2. Na desktopie ramka ma kolumnę `1fr` z `1fr 2fr` (277px), a w Figmie 329px.
+3. Przy węższym desktopie (ok. 1048px) kadr karty 4 robi się pionowy i bezsensowny, a między `h3` a `p` pojawia się przerwa.
+
+Dane z Figmy (warstwa 388 × 269 = cały plik, bo te same proporcje):
+| | kadr | proporcje | oś `cover` | `scale` | pozycja |
+|---|---|---|---|---|---|
+| mobile | 361 × 245 | 1.47 (> 1.44) | szerokość | 388 / 361 ≈ 1.07 | 6/27 = 22%, 21/24 = 88% |
+| desktop | 329 × 245 | 1.34 (< 1.44) | wysokość | 269 / 245 ≈ 1.10 | 6/59 = 10%, 21/24 = 88% |
+
+### Decyzje i dlaczego
+
+**1. Oś `cover` sprawdzam względem pliku, osobno dla każdego kadru**
+Ta sama karta ma na mobile i desktopie **inną oś**: ramka mobile (1.47) jest szersza niż plik (1.44), a desktopowa (1.34) węższa. O osi decyduje porównanie ramki z **plikiem**, a nie mobile z desktopem.
+
+**2. Desktop: `aspect-ratio: auto` zamiast `justify-self: stretch`**
+Z `aspect-ratio` z bazy ramka na desktopie była absurdalnie szeroka (szczegóły w technice 1). `justify-self: stretch` też by zadziałało, ale wybrałem `aspect-ratio: auto`: usuwam przyczynę zamiast z nią walczyć, ten sam wzorzec co w karcie 3, a ramka bez proporcji nie rozpycha wierszy karty przy krótkim tekście.
+
+**3. `grid-template-columns: 329fr 501fr` zamiast `1fr 2fr`**
+Figma: ramka 329, tekst 501, gap 16. Szerokość treści karty była taka sama (~846px), różnił się tylko podział. Liczby z Figmy zamiast `2fr 3fr` z tego samego powodu co `aspect-ratio: 395 / 240`: widać źródło.
+
+**4. Zoom przy innej szerokości niż w Figmie: akceptuję**
+Ramka na desktopie jest rozciągnięta, więc proporcje zmieniają się z szerokością okna. Dopóki jest węższa niż plik, `cover` stale dopasowuje wysokość: widać zawsze 1/`scale` wysokości zdjęcia, nie ma pustych miejsc, zmienia się tylko kadr w poziomie.
+
+**5. Układ pośredni 761–1100px zamiast łatania karty 4**
+Przy węższym desktopie opis karty 3 w wąskiej kolumnie wydłuża wiersz 2. Karta 4 się rozciąga, a nadmiar idzie i w ramkę (pionowy kadr), i w wiersze `h3`/`p` (przerwa). **Jedna przyczyna, dwa objawy.**
+
+Rozważone kierunki:
+- szersza kolumna karty 3: tylko przesuwa moment, w którym problem się pojawia, i psuje zgodność z Figmą przy 1440,
+- `align-self: start` na karcie 4: usuwa przerwę, ale rozjeżdża doły kart 3 i 4, a ramka nadal zależy od tekstu,
+- **inny układ w przedziale, w którym trzy kolumny się nie mieszczą**: wybrany.
+
+Zmierzyłem, że układ psuje się poniżej ok. 1100px. Breakpoint wynika więc z treści, a nie z typowego urządzenia. W przedziale 761–1100: `repeat(2, 1fr)`, karty jak na mobile, kolejność 1, 2, 4, 3 z bazy. Cały układ trzykolumnowy (subgrid karty 3, wewnętrzny grid karty 4) przeniosłem do `@media (width > 1100px)`.
+
+Niższa karta w wierszu się rozciąga, a nadmiar trafia na jej dół (karta to flex w kolumnie). Zdjęcia mają `aspect-ratio`, więc kadry się nie psują.
+
+**6. `gap: 1rem` jawnie w obu blokach `@media`**
+Spójność z innymi wielokolumnowymi siatkami na stronie. W `> 1100px` linia jest technicznie zbędna, bo dziedziczy z `> 760px`, ale zostawiłem ją, żeby każdy blok czytał się samodzielnie. Ryzyko: zmiana w jednym bloku bez drugiego.
+
+### Poznane techniki
+
+**1. `grid-row`/`grid-column` wybierają obszar, a nie rozmiar**
+Rozmiar elementu w obszarze ustalają `align-self` (pion) i `justify-self` (poziom). Szerokość kolumn ustala `grid-template-columns` na kontenerze. Element z `aspect-ratio`, `align-self: stretch` i `justify-self: normal` bierze wysokość z obszaru, a szerokość = wysokość × proporcje, czyli może wyjść poza kolumnę.
+
+**2. Część widocznej wysokości zdjęcia = 1 / `scale`**
+Gdy `cover` dopasowuje wysokość, przy `scale: 1.2` widać 300/360 ≈ 0.83 wysokości zdjęcia, przy każdej wysokości ramki.
+
+**3. Dlaczego przełączenie osi `cover` byłoby kłopotem**
+`scale` z Figmy liczony jest względem osi, którą dopasowuje `cover`. Gdyby ramka przekroczyła proporcje pliku, zmieniłaby się podstawa skali (inny zoom niż w projekcie) i oś nadmiaru (`object-position` X przestaje działać, liczy się Y). Kadr działałby wtedy według innych zasad.
+
+**4. Najpierw szukaj wspólnej przyczyny objawów**
+Kadr i przerwa wyglądały na dwa problemy. Pytanie „skąd bierze się wysokość?” pokazało jeden łańcuch: tekst karty 3 → wiersz 2 → stretch karty 4.
+
+### Aktualny kod
+
+```css
+/* @layer pages, .faq-cards */
+> :nth-child(4) {
+  .card__img-frame {
+    aspect-ratio: 361 / 245;
+
+    img {
+      scale: 1.07;
+      object-position: 22% 88%;
+      transform-origin: 22% 88%;
+    }
+  }
+}
+
+@media (width > 760px) {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (width > 1100px) {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 1rem;
+
+  /* … karty 1–3 bez zmian … */
+
+  > :nth-child(4) {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 329fr 501fr;
+    grid-template-rows: repeat(2, auto);
+
+    .card__img-frame {
+      grid-row: 1/3;
+      grid-column: 1/2;
+      align-self: stretch;
+      aspect-ratio: auto;
+
+      img {
+        scale: 1.1;
+        object-position: 10% 88%;
+        transform-origin: 10% 88%;
+      }
+    }
+
+    h3 { grid-row: 1/2; grid-column: 2/3; }
+    p  { grid-row: 2/3; grid-column: 2/3; }
+  }
+}
+```
+
+### Otwarte punkty
+
+- [ ] Stare punkty: `align-items: start` na `.pills` (wpis „Pille”).
+
+### Pytania kontrolne
+
+1. Plik 1.44, ramka 1.47. Którą oś dopasuje `cover`? A przy ramce 1.34?
+2. Jak sprawdzić w Figmie, czy warstwa pokazuje cały plik?
+3. Ramka ma `aspect-ratio`, `align-self: stretch` i nic w poziomie. Skąd bierze szerokość?
+4. `grid-column` czy `grid-template-columns`: co wybiera kolumnę, a co ustala jej szerokość?
+5. Przy `scale: 1.25` i `cover` dopasowującym wysokość, jaka część wysokości zdjęcia jest widoczna?
+6. Dlaczego szersza kolumna karty 3 nie rozwiązuje problemu węższego desktopu?
+7. Co dał układ pośredni, czego nie dawało `align-self: start` na karcie 4?
+8. Skąd wzięła się liczba 1100px?
